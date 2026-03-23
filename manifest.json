@@ -1,17 +1,15 @@
 {
-  "name": "Unshackled - Quit Any Addiction",
+  "name": "Unshackled",
   "short_name": "Unshackled",
-  "description": "Your personal companion to quit any addiction and reclaim your freedom.",
-  "start_url": "/index.html",
+  "description": "Quit any addiction. Reclaim your freedom.",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#0d1117",
-  "theme_color": "#0d1117",
+  "background_color": "#0a0e1a",
+  "theme_color": "#0a0e1a",
   "orientation": "portrait-primary",
   "icons": [
-    {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='32' fill='%230d1117'/><text y='140' font-size='120' text-anchor='middle' x='96'>🔓</text></svg>",
-      "sizes": "192x192",
-      "type": "image/svg+xml"
-    }
+    { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ]
 }

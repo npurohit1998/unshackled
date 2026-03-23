@@ -2,1647 +2,748 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
 <meta name="theme-color" content="#0a0e1a"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="description" content="Quit any addiction. Reclaim your freedom."/>
+<meta name="apple-mobile-web-app-title" content="Unshackled"/>
+<link rel="manifest" href="./manifest.json"/>
+<link rel="apple-touch-icon" href="./icon-192.png"/>
 <title>Unshackled</title>
-<link rel="manifest" href="manifest.json"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
-  :root {
-    --bg: #0a0e1a;
-    --bg2: #111827;
-    --bg3: #1a2235;
-    --surface: #1e2a40;
-    --border: rgba(255,255,255,0.07);
-    --accent: #4ade80;
-    --accent2: #34d399;
-    --gold: #fbbf24;
-    --red: #f87171;
-    --text: #f1f5f9;
-    --muted: #64748b;
-    --muted2: #94a3b8;
-    --radius: 16px;
-    --font-display: 'Playfair Display', Georgia, serif;
-    --font-body: 'DM Sans', sans-serif;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-body);
-    min-height: 100vh;
-    min-height: 100dvh;
-    overflow-x: hidden;
-    font-size: 15px;
-    line-height: 1.6;
-  }
-
-  /* ── SCROLLBAR ── */
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--surface); border-radius: 4px; }
-
-  /* ── SCREENS ── */
-  .screen { display: none; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
-  .screen.active { display: flex; }
-
-  /* ── ONBOARDING ── */
-  #screen-onboarding {
-    background: radial-gradient(ellipse at 30% 20%, rgba(74,222,128,0.12) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 80%, rgba(52,211,153,0.08) 0%, transparent 50%), var(--bg);
-    align-items: center;
-    justify-content: center;
-    padding: 40px 24px;
-    text-align: center;
-    animation: fadeIn 0.8s ease;
-  }
-
-  .onb-icon { font-size: 72px; margin-bottom: 24px; animation: float 3s ease-in-out infinite; }
-  @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
-
-  .onb-title {
-    font-family: var(--font-display);
-    font-size: clamp(36px, 8vw, 52px);
-    font-weight: 700;
-    letter-spacing: -1px;
-    line-height: 1.1;
-    margin-bottom: 12px;
-    background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .onb-sub { color: var(--muted2); font-size: 16px; max-width: 320px; margin: 0 auto 40px; }
-
-  .step-container { width: 100%; max-width: 420px; }
-
-  .step { display: none; animation: slideUp 0.4s ease; }
-  .step.active { display: block; }
-  @keyframes slideUp { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
-
-  .step-label { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
-  .step-question { font-family: var(--font-display); font-size: 22px; margin-bottom: 20px; color: var(--text); }
-
-  .input-field {
-    width: 100%; background: var(--surface); border: 1px solid var(--border);
-    color: var(--text); padding: 14px 18px; border-radius: 12px; font-size: 16px;
-    font-family: var(--font-body); outline: none; transition: border-color 0.2s;
-    -webkit-appearance: none;
-  }
-  .input-field:focus { border-color: var(--accent); }
-  .input-field::placeholder { color: var(--muted); }
-
-  .chip-grid { display: flex; flex-wrap: wrap; gap: 10px; }
-  .chip {
-    padding: 10px 18px; border-radius: 100px; border: 1px solid var(--border);
-    background: var(--surface); color: var(--muted2); cursor: pointer; font-size: 14px;
-    transition: all 0.2s; font-family: var(--font-body); white-space: nowrap;
-  }
-  .chip:hover, .chip.sel { background: rgba(74,222,128,0.15); border-color: var(--accent); color: var(--accent); }
-
-  .btn {
-    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    padding: 15px 28px; border-radius: 100px; border: none; cursor: pointer;
-    font-size: 15px; font-weight: 500; font-family: var(--font-body);
-    transition: all 0.2s; width: 100%; margin-top: 20px;
-  }
-  .btn-primary {
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    color: #0a0e1a;
-  }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(74,222,128,0.35); }
-  .btn-primary:active { transform: translateY(0); }
-  .btn-ghost { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
-  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
-
-  .step-dots { display: flex; gap: 6px; justify-content: center; margin-top: 28px; }
-  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: all 0.3s; }
-  .dot.active { background: var(--accent); width: 20px; border-radius: 4px; }
-
-  /* ── MAIN APP ── */
-  #screen-app {
-    background: var(--bg);
-    padding-bottom: 80px;
-  }
-
-  /* ── TOP HEADER ── */
-  .app-header {
-    padding: 20px 20px 0;
-    display: flex; justify-content: space-between; align-items: center;
-  }
-  .app-logo { font-family: var(--font-display); font-size: 20px; font-style: italic; color: var(--accent); }
-  .header-right { display: flex; gap: 10px; align-items: center; }
-  .icon-btn {
-    width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border);
-    background: var(--surface); display: flex; align-items: center; justify-content: center;
-    cursor: pointer; font-size: 17px; transition: all 0.2s;
-  }
-  .icon-btn:hover { border-color: var(--accent); background: rgba(74,222,128,0.1); }
-
-  /* ── HERO TIMER ── */
-  .hero-section {
-    padding: 24px 20px;
-    text-align: center;
-  }
-
-  .sobriety-label { font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
-  .addiction-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 4px 14px; border-radius: 100px; border: 1px solid var(--accent);
-    background: rgba(74,222,128,0.1); color: var(--accent); font-size: 13px;
-    margin-bottom: 20px;
-  }
-
-  .timer-ring-wrap { position: relative; width: 200px; height: 200px; margin: 0 auto 16px; }
-  .timer-ring { transform: rotate(-90deg); }
-  .ring-track { fill: none; stroke: var(--surface); stroke-width: 8; }
-  .ring-progress { fill: none; stroke: url(#ringGrad); stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
-
-  .timer-inner {
-    position: absolute; inset: 0; display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-  }
-  .timer-main {
-    font-family: var(--font-display); font-size: 36px; font-weight: 700;
-    line-height: 1; color: var(--text);
-  }
-  .timer-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
-
-  .streak-row { display: flex; justify-content: center; gap: 28px; margin-top: 8px; }
-  .streak-item { text-align: center; }
-  .streak-num { font-family: var(--font-display); font-size: 24px; font-weight: 700; color: var(--gold); }
-  .streak-lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
-
-  /* ── CARDS GRID ── */
-  .section { padding: 0 20px 20px; }
-  .section-title { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
-
-  .cards-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .card {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 16px;
-    cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden;
-  }
-  .card::before {
-    content: ''; position: absolute; inset: 0;
-    background: linear-gradient(135deg, rgba(74,222,128,0.05), transparent);
-    opacity: 0; transition: opacity 0.2s;
-  }
-  .card:hover::before { opacity: 1; }
-  .card:hover { border-color: rgba(74,222,128,0.3); transform: translateY(-2px); }
-  .card:active { transform: translateY(0); }
-
-  .card-icon { font-size: 28px; margin-bottom: 8px; }
-  .card-label { font-size: 12px; color: var(--muted2); }
-  .card-value { font-family: var(--font-display); font-size: 20px; color: var(--text); margin-top: 2px; }
-  .card-value.green { color: var(--accent); }
-  .card-value.gold { color: var(--gold); }
-  .card-value.red { color: var(--red); }
-
-  /* ── MILESTONES ── */
-  .milestone-list { display: flex; flex-direction: column; gap: 10px; }
-  .milestone {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 14px 16px;
-    display: flex; align-items: center; gap: 14px; transition: all 0.2s;
-  }
-  .milestone.unlocked { border-color: rgba(74,222,128,0.4); background: rgba(74,222,128,0.06); }
-  .milestone-icon { font-size: 28px; flex-shrink: 0; }
-  .milestone-text { flex: 1; }
-  .milestone-name { font-weight: 500; font-size: 14px; }
-  .milestone-desc { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .milestone-badge {
-    font-size: 11px; padding: 3px 10px; border-radius: 100px;
-    background: rgba(74,222,128,0.15); color: var(--accent); white-space: nowrap;
-  }
-  .milestone-badge.locked { background: var(--surface); color: var(--muted); }
-
-  /* ── JOURNAL ── */
-  .journal-btn {
-    background: linear-gradient(135deg, var(--bg2), var(--surface));
-    border: 1px dashed rgba(74,222,128,0.3);
-    border-radius: var(--radius); padding: 20px;
-    text-align: center; cursor: pointer; transition: all 0.2s;
-    display: flex; align-items: center; gap: 14px;
-  }
-  .journal-btn:hover { border-color: var(--accent); background: rgba(74,222,128,0.07); }
-  .journal-icon { font-size: 32px; }
-  .journal-text { text-align: left; }
-  .journal-title { font-size: 15px; font-weight: 500; }
-  .journal-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
-
-  .journal-entries { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
-  .journal-entry {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 14px 16px;
-  }
-  .journal-entry-date { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
-  .journal-entry-mood { font-size: 20px; margin-bottom: 4px; }
-  .journal-entry-text { font-size: 13px; color: var(--muted2); line-height: 1.5; }
-
-  /* ── CRAVING TOOLKIT ── */
-  .toolkit-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-  .tool-card {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 16px 10px; text-align: center;
-    cursor: pointer; transition: all 0.2s;
-  }
-  .tool-card:hover { border-color: rgba(74,222,128,0.4); background: rgba(74,222,128,0.06); transform: scale(1.03); }
-  .tool-icon { font-size: 30px; margin-bottom: 6px; }
-  .tool-name { font-size: 11px; color: var(--muted2); }
-
-  /* ── BOTTOM NAV ── */
-  .bottom-nav {
-    position: fixed; bottom: 0; left: 0; right: 0;
-    background: rgba(10,14,26,0.9); backdrop-filter: blur(20px);
-    border-top: 1px solid var(--border); display: flex;
-    padding: 8px 0 max(8px, env(safe-area-inset-bottom));
-    z-index: 100;
-  }
-  .nav-item {
-    flex: 1; display: flex; flex-direction: column; align-items: center;
-    gap: 4px; cursor: pointer; padding: 6px 4px; transition: all 0.2s;
-    border: none; background: none; color: var(--muted); font-family: var(--font-body);
-  }
-  .nav-item.active { color: var(--accent); }
-  .nav-item:hover { color: var(--muted2); }
-  .nav-icon { font-size: 22px; }
-  .nav-label { font-size: 10px; letter-spacing: 0.5px; }
-
-  /* ── MODAL ── */
-  .modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
-    z-index: 200; display: none; align-items: flex-end; justify-content: center;
-    animation: fadeIn 0.2s ease;
-  }
-  .modal-overlay.open { display: flex; }
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-  .modal {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 24px 24px 0 0; padding: 28px 24px max(28px, env(safe-area-inset-bottom));
-    width: 100%; max-width: 520px; animation: slideUp 0.3s ease;
-    max-height: 90vh; overflow-y: auto;
-  }
-  .modal-handle { width: 40px; height: 4px; background: var(--border); border-radius: 4px; margin: 0 auto 20px; }
-  .modal-title { font-family: var(--font-display); font-size: 22px; margin-bottom: 20px; }
-
-  /* ── BREATHE EXERCISE ── */
-  .breathe-container { text-align: center; padding: 20px 0; }
-  .breathe-circle {
-    width: 140px; height: 140px; border-radius: 50%; margin: 0 auto 20px;
-    background: radial-gradient(circle, rgba(74,222,128,0.3), rgba(74,222,128,0.05));
-    border: 2px solid rgba(74,222,128,0.4);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 36px;
-    transition: transform 4s ease-in-out;
-  }
-  .breathe-circle.inhale { transform: scale(1.4); }
-  .breathe-circle.exhale { transform: scale(0.8); }
-  .breathe-text { font-family: var(--font-display); font-size: 22px; margin-bottom: 6px; }
-  .breathe-count { font-size: 40px; font-weight: 700; color: var(--accent); }
-
-  /* ── RELAPSE MODAL ── */
-  .relapse-warning {
-    background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.3);
-    border-radius: 12px; padding: 14px; margin-bottom: 20px; font-size: 14px; color: #fca5a5;
-  }
-
-  /* ── URGE COUNTER ── */
-  .urge-counter {
-    display: flex; align-items: center; justify-content: center; gap: 20px;
-    padding: 16px; background: var(--surface); border-radius: var(--radius); margin-bottom: 16px;
-  }
-  .urge-num { font-family: var(--font-display); font-size: 48px; font-weight: 700; color: var(--text); }
-  .urge-btn {
-    width: 52px; height: 52px; border-radius: 50%; border: none; cursor: pointer;
-    font-size: 24px; font-weight: 700; font-family: var(--font-body);
-    transition: all 0.15s; display: flex; align-items: center; justify-content: center;
-  }
-  .urge-inc { background: rgba(74,222,128,0.2); color: var(--accent); }
-  .urge-inc:hover { background: rgba(74,222,128,0.4); transform: scale(1.1); }
-  .urge-dec { background: var(--bg2); color: var(--muted2); border: 1px solid var(--border); }
-  .urge-dec:hover { background: var(--surface); transform: scale(1.1); }
-
-  /* ── MOOD SELECTOR ── */
-  .mood-row { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
-  .mood-btn {
-    font-size: 28px; cursor: pointer; padding: 8px; border-radius: 12px;
-    border: 2px solid transparent; background: var(--surface); transition: all 0.2s;
-  }
-  .mood-btn:hover { border-color: var(--accent); background: rgba(74,222,128,0.1); transform: scale(1.15); }
-  .mood-btn.sel { border-color: var(--accent); background: rgba(74,222,128,0.15); }
-
-  .textarea-field {
-    width: 100%; background: var(--surface); border: 1px solid var(--border);
-    color: var(--text); padding: 14px; border-radius: 12px; font-size: 15px;
-    font-family: var(--font-body); outline: none; resize: none; transition: border-color 0.2s;
-    line-height: 1.6;
-  }
-  .textarea-field:focus { border-color: var(--accent); }
-  .textarea-field::placeholder { color: var(--muted); }
-
-  /* ── PAGES ── */
-  .page { display: none; }
-  .page.active { display: block; }
-
-  /* ── INSIGHTS PAGE ── */
-  .insight-card {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 18px; margin-bottom: 12px;
-  }
-  .insight-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-  .insight-title { font-size: 13px; font-weight: 500; }
-  .insight-period { font-size: 11px; color: var(--muted); }
-
-  .bar-chart { display: flex; align-items: flex-end; gap: 6px; height: 80px; }
-  .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-  .bar { width: 100%; border-radius: 4px 4px 0 0; background: var(--surface); transition: height 1s ease; min-height: 4px; }
-  .bar.filled { background: linear-gradient(180deg, var(--accent), var(--accent2)); }
-  .bar-day { font-size: 9px; color: var(--muted); }
-
-  .progress-stat { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
-  .progress-stat:last-child { border-bottom: none; }
-  .ps-label { font-size: 13px; color: var(--muted2); }
-  .ps-val { font-weight: 600; font-size: 15px; }
-  .ps-val.good { color: var(--accent); }
-  .ps-val.gold { color: var(--gold); }
-
-  /* ── SETTINGS PAGE ── */
-  .settings-group { margin-bottom: 28px; }
-  .settings-group-title { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; padding: 0 20px; }
-  .settings-item {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 16px 20px; cursor: pointer; transition: background 0.15s;
-  }
-  .settings-item:hover { background: rgba(255,255,255,0.03); }
-  .settings-item-left { display: flex; align-items: center; gap: 14px; }
-  .settings-item-icon { font-size: 20px; }
-  .settings-item-text { font-size: 15px; }
-  .settings-item-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .settings-item-right { color: var(--muted); font-size: 18px; }
-
-  .toggle {
-    width: 44px; height: 26px; background: var(--surface); border-radius: 13px;
-    position: relative; cursor: pointer; transition: background 0.2s; border: none;
-    flex-shrink: 0;
-  }
-  .toggle::after {
-    content: ''; position: absolute; top: 3px; left: 3px;
-    width: 20px; height: 20px; border-radius: 50%; background: var(--muted);
-    transition: all 0.2s;
-  }
-  .toggle.on { background: var(--accent); }
-  .toggle.on::after { left: 21px; background: #0a0e1a; }
-
-  /* ── MOTIVATION QUOTES ── */
-  .quote-card {
-    background: linear-gradient(135deg, rgba(74,222,128,0.08), rgba(52,211,153,0.04));
-    border: 1px solid rgba(74,222,128,0.2); border-radius: var(--radius); padding: 20px;
-    margin-bottom: 20px; position: relative; overflow: hidden;
-  }
-  .quote-card::before {
-    content: '"'; position: absolute; top: -10px; left: 12px;
-    font-family: var(--font-display); font-size: 80px; color: rgba(74,222,128,0.15);
-    line-height: 1;
-  }
-  .quote-text { font-family: var(--font-display); font-style: italic; font-size: 17px; line-height: 1.5; margin-bottom: 10px; }
-  .quote-author { font-size: 12px; color: var(--muted); }
-
-  /* ── SAVINGS ── */
-  .savings-display {
-    background: linear-gradient(135deg, rgba(251,191,36,0.1), rgba(251,191,36,0.05));
-    border: 1px solid rgba(251,191,36,0.3); border-radius: var(--radius); padding: 20px;
-    text-align: center; margin-bottom: 12px;
-  }
-  .savings-amount { font-family: var(--font-display); font-size: 40px; font-weight: 700; color: var(--gold); }
-  .savings-label { font-size: 12px; color: var(--muted); margin-top: 4px; }
-
-  .divider { height: 1px; background: var(--border); margin: 4px 0; }
-
-  /* ── ANIMATIONS ── */
-  .pulse { animation: pulse 2s infinite; }
-  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.6; } }
-
-  .shimmer {
-    background: linear-gradient(90deg, var(--bg2) 25%, var(--surface) 50%, var(--bg2) 75%);
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
-  }
-  @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-
-  /* ── TOAST ── */
-  .toast {
-    position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-80px);
-    background: var(--bg3); border: 1px solid var(--accent);
-    color: var(--text); padding: 12px 20px; border-radius: 100px;
-    font-size: 14px; z-index: 999; transition: transform 0.3s ease;
-    white-space: nowrap; max-width: 90vw;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .toast.show { transform: translateX(-50%) translateY(0); }
-
-  /* ── INSTALL BANNER ── */
-  .install-banner {
-    margin: 0 20px 16px;
-    background: linear-gradient(135deg, rgba(74,222,128,0.1), rgba(52,211,153,0.05));
-    border: 1px solid rgba(74,222,128,0.25); border-radius: var(--radius);
-    padding: 14px 16px; display: flex; align-items: center; gap: 12px;
-    cursor: pointer; transition: all 0.2s;
-  }
-  .install-banner:hover { border-color: var(--accent); }
-  .install-banner-text { flex: 1; }
-  .install-banner-title { font-size: 13px; font-weight: 500; }
-  .install-banner-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
-  .install-banner-close { color: var(--muted); font-size: 18px; padding: 4px; }
-
-  /* responsive */
-  @media (max-width: 360px) {
-    .toolkit-grid { grid-template-columns: repeat(2, 1fr); }
-    .cards-2col { grid-template-columns: 1fr; }
-  }
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0a0e1a;--bg2:#111827;--bg3:#1a2235;--surf:#1e2a40;
+  --border:rgba(255,255,255,0.08);--accent:#4ade80;--accent2:#34d399;
+  --gold:#fbbf24;--red:#f87171;--text:#f1f5f9;--muted:#64748b;--muted2:#94a3b8;
+  --r:14px;--display:'Playfair Display',Georgia,serif;--body:'DM Sans',sans-serif;
+}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:15px;line-height:1.6}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--surf);border-radius:3px}
+.screen{position:fixed;inset:0;display:none;flex-direction:column;overflow:hidden}
+.screen.active{display:flex}
+#ob{background:radial-gradient(ellipse at 30% 20%,rgba(74,222,128,.12),transparent 60%),var(--bg);
+  align-items:center;justify-content:center;padding:32px 24px;text-align:center;overflow-y:auto}
+.ob-icon{font-size:64px;margin-bottom:20px;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.ob-title{font-family:var(--display);font-size:clamp(34px,8vw,50px);font-weight:700;letter-spacing:-1px;line-height:1.1;
+  margin-bottom:10px;background:linear-gradient(135deg,#fff,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ob-sub{color:var(--muted2);font-size:15px;max-width:300px;margin:0 auto 32px}
+.ob-wrap{width:100%;max-width:400px}
+.step{display:none;animation:sup .35s ease}
+.step.on{display:block}
+@keyframes sup{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.slabel{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+.sq{font-family:var(--display);font-size:21px;margin-bottom:18px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:9px 16px;border-radius:100px;border:1px solid var(--border);background:var(--surf);
+  color:var(--muted2);cursor:pointer;font-size:13px;transition:all .2s;font-family:var(--body)}
+.chip:active,.chip.on{background:rgba(74,222,128,.15);border-color:var(--accent);color:var(--accent)}
+input.field{width:100%;background:var(--surf);border:1px solid var(--border);color:var(--text);
+  padding:13px 16px;border-radius:11px;font-size:16px;font-family:var(--body);outline:none;
+  transition:border-color .2s;-webkit-appearance:none;margin-top:10px}
+input.field:focus{border-color:var(--accent)}
+input.field::placeholder{color:var(--muted)}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 24px;
+  border-radius:100px;border:none;cursor:pointer;font-size:15px;font-weight:500;
+  font-family:var(--body);transition:all .2s;width:100%;margin-top:18px}
+.btn-p{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0a0e1a}
+.btn-p:active{transform:scale(.97)}
+.btn-g{background:var(--surf);color:var(--text);border:1px solid var(--border)}
+.dots{display:flex;gap:6px;justify-content:center;margin-top:24px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--border);transition:all .3s}
+.dot.on{background:var(--accent);width:18px;border-radius:4px}
+#app{background:var(--bg)}
+.app-hdr{padding:16px 18px 0;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.logo{font-family:var(--display);font-size:19px;font-style:italic;color:var(--accent)}
+.hdr-btns{display:flex;gap:8px}
+.ico-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:var(--surf);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all .2s}
+.ico-btn:active{background:rgba(74,222,128,.1);border-color:var(--accent)}
+.pages{flex:1;overflow:hidden;position:relative}
+.page{position:absolute;inset:0;overflow-y:auto;padding-bottom:80px;display:none}
+.page.on{display:block}
+.sec{padding:0 18px 18px}
+.stitle{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.hero{padding:18px 18px 12px;text-align:center}
+.sob-lbl{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.add-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 14px;border-radius:100px;
+  border:1px solid var(--accent);background:rgba(74,222,128,.1);color:var(--accent);font-size:13px;margin-bottom:18px}
+.ring-wrap{position:relative;width:190px;height:190px;margin:0 auto 14px}
+.ring-wrap svg{transform:rotate(-90deg)}
+.ring-track{fill:none;stroke:var(--surf);stroke-width:8}
+.ring-prog{fill:none;stroke:url(#rg);stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset .8s ease}
+.t-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.t-main{font-family:var(--display);font-size:34px;font-weight:700;line-height:1}
+.t-sub{font-size:12px;color:var(--muted);margin-top:4px}
+.streak-row{display:flex;justify-content:center;gap:24px;margin-top:6px}
+.s-item{text-align:center}
+.s-num{font-family:var(--display);font-size:22px;font-weight:700}
+.s-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;cursor:pointer;transition:all .2s}
+.card:active{border-color:rgba(74,222,128,.4);background:rgba(74,222,128,.06);transform:scale(.97)}
+.card-ico{font-size:26px;margin-bottom:6px}
+.card-lbl{font-size:11px;color:var(--muted2)}
+.card-val{font-family:var(--display);font-size:19px;margin-top:2px}
+.green{color:var(--accent)}.gold{color:var(--gold)}
+.qcard{background:linear-gradient(135deg,rgba(74,222,128,.07),rgba(52,211,153,.03));
+  border:1px solid rgba(74,222,128,.18);border-radius:var(--r);padding:18px;margin-bottom:18px;position:relative;overflow:hidden}
+.qcard::before{content:'"';position:absolute;top:-8px;left:10px;font-family:var(--display);
+  font-size:72px;color:rgba(74,222,128,.12);line-height:1}
+.q-text{font-family:var(--display);font-style:italic;font-size:16px;line-height:1.5;margin-bottom:8px}
+.q-auth{font-size:11px;color:var(--muted)}
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tcrd{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);
+  padding:14px 8px;text-align:center;cursor:pointer;transition:all .2s}
+.tcrd:active{border-color:rgba(74,222,128,.4);background:rgba(74,222,128,.06);transform:scale(.95)}
+.t-ico{font-size:28px;margin-bottom:5px}
+.t-nm{font-size:11px;color:var(--muted2)}
+.mlist{display:flex;flex-direction:column;gap:8px}
+.mile{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);
+  padding:12px 14px;display:flex;align-items:center;gap:12px}
+.mile.done{border-color:rgba(74,222,128,.35);background:rgba(74,222,128,.05)}
+.m-ico{font-size:26px;flex-shrink:0}
+.m-txt{flex:1}
+.m-name{font-weight:500;font-size:14px}
+.m-desc{font-size:11px;color:var(--muted);margin-top:2px}
+.m-badge{font-size:11px;padding:3px 10px;border-radius:100px;white-space:nowrap;flex-shrink:0}
+.m-badge.done{background:rgba(74,222,128,.15);color:var(--accent)}
+.m-badge.lock{background:var(--surf);color:var(--muted)}
+.j-add{background:var(--bg2);border:1px dashed rgba(74,222,128,.3);border-radius:var(--r);
+  padding:18px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;margin-bottom:12px}
+.j-add:active{border-color:var(--accent);background:rgba(74,222,128,.06)}
+.j-entries{display:flex;flex-direction:column;gap:8px}
+.j-entry{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px}
+.j-date{font-size:11px;color:var(--muted);margin-bottom:4px}
+.j-mood{font-size:18px;margin-bottom:3px}
+.j-body{font-size:13px;color:var(--muted2);line-height:1.5}
+.ins-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:10px}
+.ins-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.ins-title{font-size:13px;font-weight:500}
+.bar-wrap{display:flex;align-items:flex-end;gap:5px;height:72px}
+.b-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.bar{width:100%;border-radius:3px 3px 0 0;background:var(--surf);min-height:3px}
+.bar.fill{background:linear-gradient(180deg,var(--accent),var(--accent2))}
+.b-day{font-size:9px;color:var(--muted)}
+.p-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)}
+.p-row:last-child{border-bottom:none}
+.p-lbl{font-size:13px;color:var(--muted2)}
+.p-val{font-weight:500;font-size:14px}
+.sg-title{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;padding:0 18px}
+.si{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;cursor:pointer;transition:background .15s}
+.si:active{background:rgba(255,255,255,.03)}
+.si-l{display:flex;align-items:center;gap:12px}
+.si-ico{font-size:19px}
+.si-txt{font-size:14px}
+.si-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.si-r{color:var(--muted);font-size:17px}
+.nav{position:absolute;bottom:0;left:0;right:0;background:rgba(10,14,26,.92);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);display:flex;
+  padding:6px 0 max(6px,env(safe-area-inset-bottom));z-index:50}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;
+  padding:5px 4px;transition:all .2s;border:none;background:none;color:var(--muted);font-family:var(--body)}
+.ni.on{color:var(--accent)}
+.ni-ico{font-size:21px}
+.ni-lbl{font-size:10px;letter-spacing:.3px}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);z-index:200;display:none;align-items:flex-end;justify-content:center}
+.overlay.on{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:22px 22px 0 0;
+  padding:24px 20px max(24px,env(safe-area-inset-bottom));width:100%;max-width:500px;
+  max-height:90vh;overflow-y:auto;animation:sup .3s ease}
+.mhandle{width:36px;height:4px;background:var(--border);border-radius:4px;margin:0 auto 18px}
+.mtitle{font-family:var(--display);font-size:21px;margin-bottom:16px}
+.bc{text-align:center;padding:16px 0}
+.bcircle{width:130px;height:130px;border-radius:50%;margin:0 auto 18px;
+  background:rgba(74,222,128,.08);border:2px solid rgba(74,222,128,.35);
+  display:flex;align-items:center;justify-content:center;font-size:32px;
+  transition:transform 4s ease-in-out}
+.bcircle.in{transform:scale(1.35)}
+.bcircle.out{transform:scale(.8)}
+.b-txt{font-family:var(--display);font-size:20px;margin-bottom:4px}
+.b-cnt{font-size:38px;font-weight:700;color:var(--accent)}
+.uc{display:flex;align-items:center;justify-content:center;gap:18px;
+  padding:14px;background:var(--surf);border-radius:var(--r);margin-bottom:14px}
+.u-num{font-family:var(--display);font-size:46px;font-weight:700}
+.u-btn{width:50px;height:50px;border-radius:50%;border:none;cursor:pointer;
+  font-size:22px;font-weight:700;font-family:var(--body);transition:all .15s;
+  display:flex;align-items:center;justify-content:center}
+.u-inc{background:rgba(74,222,128,.2);color:var(--accent)}
+.u-inc:active{background:rgba(74,222,128,.4);transform:scale(1.1)}
+.u-dec{background:var(--bg2);color:var(--muted2);border:1px solid var(--border)}
+.u-dec:active{transform:scale(1.1)}
+.mood-row{display:flex;gap:8px;justify-content:center;margin-bottom:16px;flex-wrap:wrap}
+.mb{font-size:26px;cursor:pointer;padding:7px;border-radius:11px;border:2px solid transparent;
+  background:var(--surf);transition:all .2s}
+.mb:active,.mb.on{border-color:var(--accent);background:rgba(74,222,128,.12)}
+textarea.field{width:100%;background:var(--surf);border:1px solid var(--border);color:var(--text);
+  padding:12px;border-radius:11px;font-size:14px;font-family:var(--body);outline:none;
+  resize:none;transition:border-color .2s;line-height:1.6;-webkit-appearance:none}
+textarea.field:focus{border-color:var(--accent)}
+textarea.field::placeholder{color:var(--muted)}
+.sav-big{background:linear-gradient(135deg,rgba(251,191,36,.1),rgba(251,191,36,.04));
+  border:1px solid rgba(251,191,36,.3);border-radius:var(--r);padding:18px;text-align:center;margin-bottom:12px}
+.sav-amt{font-family:var(--display);font-size:38px;font-weight:700;color:var(--gold)}
+.rw{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.25);
+  border-radius:11px;padding:12px;margin-bottom:18px;font-size:13px;color:#fca5a5;line-height:1.5}
+.dlist{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.ditem{background:var(--surf);border-radius:11px;padding:13px;font-size:14px;line-height:1.4}
+.af-card{background:linear-gradient(135deg,rgba(74,222,128,.08),rgba(52,211,153,.04));
+  border:1px solid rgba(74,222,128,.2);border-radius:var(--r);padding:20px;margin-bottom:18px}
+.af-txt{font-family:var(--display);font-style:italic;font-size:18px;line-height:1.5;text-align:center}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);
+  background:var(--bg3);border:1px solid var(--accent);color:var(--text);
+  padding:11px 18px;border-radius:100px;font-size:13px;z-index:999;
+  transition:transform .3s ease;white-space:nowrap;max-width:90vw;pointer-events:none}
+.toast.on{transform:translateX(-50%) translateY(0)}
+.inst-banner{margin:10px 18px 0;background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.2);
+  border-radius:var(--r);padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer}
+.inst-banner:active{border-color:var(--accent)}
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════
-     ONBOARDING SCREEN
-════════════════════════════════════ -->
-<div id="screen-onboarding" class="screen active">
-  <div class="onb-icon">🔓</div>
-  <h1 class="onb-title">Unshackled</h1>
-  <p class="onb-sub">Your personal companion to break free and reclaim your life — one day at a time.</p>
-
-  <div class="step-container">
-    <!-- Step 1: Addiction type -->
-    <div class="step active" id="step-1">
-      <div class="step-label">Step 1 of 4</div>
-      <div class="step-question">What are you quitting?</div>
-      <div class="chip-grid" id="addiction-chips">
-        <div class="chip" data-val="🚬 Smoking">🚬 Smoking</div>
-        <div class="chip" data-val="🍺 Alcohol">🍺 Alcohol</div>
-        <div class="chip" data-val="📱 Social Media">📱 Social Media</div>
-        <div class="chip" data-val="🎮 Gaming">🎮 Gaming</div>
-        <div class="chip" data-val="☕ Caffeine">☕ Caffeine</div>
-        <div class="chip" data-val="🍭 Sugar">🍭 Sugar</div>
-        <div class="chip" data-val="💊 Substances">💊 Substances</div>
-        <div class="chip" data-val="🛒 Shopping">🛒 Shopping</div>
-        <div class="chip" data-val="🎰 Gambling">🎰 Gambling</div>
-        <div class="chip" data-val="🍔 Junk Food">🍔 Junk Food</div>
+<div id="ob" class="screen active">
+  <div class="ob-icon">🔓</div>
+  <h1 class="ob-title">Unshackled</h1>
+  <p class="ob-sub">Break free from any addiction — one day at a time.</p>
+  <div class="ob-wrap">
+    <div class="step on" id="s1">
+      <div class="slabel">Step 1 of 4</div>
+      <div class="sq">What are you quitting?</div>
+      <div class="chips" id="add-chips">
+        <div class="chip" data-v="🚬 Smoking">🚬 Smoking</div>
+        <div class="chip" data-v="🍺 Alcohol">🍺 Alcohol</div>
+        <div class="chip" data-v="🔞 Porn &amp; Masturbation">🔞 Porn &amp; Masturbation</div>
+        <div class="chip" data-v="📱 Social Media">📱 Social Media</div>
+        <div class="chip" data-v="🎮 Gaming">🎮 Gaming</div>
+        <div class="chip" data-v="☕ Caffeine">☕ Caffeine</div>
+        <div class="chip" data-v="🍭 Sugar">🍭 Sugar</div>
+        <div class="chip" data-v="💊 Substances">💊 Substances</div>
+        <div class="chip" data-v="🛒 Shopping">🛒 Shopping</div>
+        <div class="chip" data-v="🎰 Gambling">🎰 Gambling</div>
+        <div class="chip" data-v="🍔 Junk Food">🍔 Junk Food</div>
       </div>
-      <input class="input-field" id="custom-addiction" placeholder="Or type your own..." style="margin-top:12px"/>
-      <button class="btn btn-primary" onclick="nextStep(1)">Continue →</button>
+      <input class="field" id="custom-add" placeholder="Or type your own..."/>
+      <button class="btn btn-p" onclick="goStep(1)">Continue →</button>
     </div>
-
-    <!-- Step 2: Daily cost -->
-    <div class="step" id="step-2">
-      <div class="step-label">Step 2 of 4</div>
-      <div class="step-question">How much do you spend daily on this habit? (₹)</div>
-      <input class="input-field" id="daily-cost" type="number" placeholder="e.g. 200" inputmode="numeric"/>
-      <button class="btn btn-primary" onclick="nextStep(2)">Continue →</button>
+    <div class="step" id="s2">
+      <div class="slabel">Step 2 of 4</div>
+      <div class="sq">Daily cost of this habit (₹)?</div>
+      <input class="field" id="cost-in" type="number" inputmode="numeric" placeholder="e.g. 200  (0 if none)"/>
+      <button class="btn btn-p" onclick="goStep(2)">Continue →</button>
     </div>
-
-    <!-- Step 3: Motivation -->
-    <div class="step" id="step-3">
-      <div class="step-label">Step 3 of 4</div>
-      <div class="step-question">What's your biggest reason to quit?</div>
-      <div class="chip-grid" id="reason-chips">
-        <div class="chip" data-val="Health">❤️ Health</div>
-        <div class="chip" data-val="Family">👨‍👩‍👧 Family</div>
-        <div class="chip" data-val="Money">💰 Money</div>
-        <div class="chip" data-val="Self-respect">✨ Self-respect</div>
-        <div class="chip" data-val="Career">💼 Career</div>
-        <div class="chip" data-val="Fitness">🏃 Fitness</div>
+    <div class="step" id="s3">
+      <div class="slabel">Step 3 of 4</div>
+      <div class="sq">Your biggest reason to quit?</div>
+      <div class="chips" id="why-chips">
+        <div class="chip" data-v="Health">❤️ Health</div>
+        <div class="chip" data-v="Family">👨‍👩‍👧 Family</div>
+        <div class="chip" data-v="Self-respect">✨ Self-respect</div>
+        <div class="chip" data-v="Money">💰 Money</div>
+        <div class="chip" data-v="Career">💼 Career</div>
+        <div class="chip" data-v="Fitness">🏃 Fitness</div>
+        <div class="chip" data-v="Mental clarity">🧠 Mental clarity</div>
+        <div class="chip" data-v="Relationships">💑 Relationships</div>
       </div>
-      <button class="btn btn-primary" onclick="nextStep(3)">Continue →</button>
+      <button class="btn btn-p" onclick="goStep(3)">Continue →</button>
     </div>
-
-    <!-- Step 4: Name -->
-    <div class="step" id="step-4">
-      <div class="step-label">Step 4 of 4</div>
-      <div class="step-question">What should we call you?</div>
-      <input class="input-field" id="user-name" placeholder="Your first name..."/>
-      <button class="btn btn-primary" onclick="startApp()">Begin My Journey 🚀</button>
+    <div class="step" id="s4">
+      <div class="slabel">Step 4 of 4</div>
+      <div class="sq">What should we call you?</div>
+      <input class="field" id="name-in" placeholder="Your first name..."/>
+      <button class="btn btn-p" onclick="startApp()">Begin My Journey 🚀</button>
     </div>
-
-    <div class="step-dots">
-      <div class="dot active" id="dot-1"></div>
-      <div class="dot" id="dot-2"></div>
-      <div class="dot" id="dot-3"></div>
-      <div class="dot" id="dot-4"></div>
+    <div class="dots">
+      <div class="dot on" id="d1"></div><div class="dot" id="d2"></div>
+      <div class="dot" id="d3"></div><div class="dot" id="d4"></div>
     </div>
   </div>
 </div>
 
-
-<!-- ═══════════════════════════════════
-     MAIN APP SCREEN
-════════════════════════════════════ -->
-<div id="screen-app" class="screen">
-
-  <!-- Header -->
-  <div class="app-header">
-    <div class="app-logo">Unshackled</div>
-    <div class="header-right">
-      <div class="icon-btn" onclick="showModal('modal-urge')">😤</div>
-      <div class="icon-btn" onclick="showModal('modal-relapse')">🔁</div>
+<div id="app" class="screen">
+  <div class="app-hdr">
+    <div class="logo">Unshackled</div>
+    <div class="hdr-btns">
+      <div class="ico-btn" onclick="openModal('m-urge')">😤</div>
+      <div class="ico-btn" onclick="openModal('m-relapse')">🔁</div>
     </div>
   </div>
-
-  <!-- Install Banner -->
-  <div class="install-banner" id="install-banner" style="display:none" onclick="installPWA()">
-    <span style="font-size:22px">📲</span>
-    <div class="install-banner-text">
-      <div class="install-banner-title">Install App for Best Experience</div>
-      <div class="install-banner-sub">Works offline • Daily reminders • No browser needed</div>
-    </div>
-    <span class="install-banner-close" onclick="event.stopPropagation();document.getElementById('install-banner').style.display='none'">✕</span>
+  <div class="inst-banner" id="inst-banner" style="display:none" onclick="doInstall()">
+    <span style="font-size:20px">📲</span>
+    <div style="flex:1"><div style="font-size:13px;font-weight:500">Install as App</div><div style="font-size:11px;color:var(--muted)">Works offline · No browser bar</div></div>
+    <span onclick="event.stopPropagation();document.getElementById('inst-banner').style.display='none'" style="color:var(--muted);padding:4px;font-size:18px">✕</span>
   </div>
+  <div class="pages">
 
-  <!-- Pages -->
-  <div id="page-home" class="page active">
-
-    <!-- Hero Timer -->
-    <div class="hero-section">
-      <div class="sobriety-label">Clean since</div>
-      <div class="addiction-badge" id="addiction-badge">🔓 Loading...</div>
-
-      <div class="timer-ring-wrap">
-        <svg class="timer-ring" width="200" height="200" viewBox="0 0 200 200">
-          <defs>
-            <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#4ade80"/>
-              <stop offset="100%" stop-color="#34d399"/>
-            </linearGradient>
-          </defs>
-          <circle class="ring-track" cx="100" cy="100" r="88"/>
-          <circle class="ring-progress" id="ring-progress" cx="100" cy="100" r="88"
-            stroke-dasharray="553" stroke-dashoffset="553"/>
-        </svg>
-        <div class="timer-inner">
-          <div class="timer-main" id="timer-main">0d</div>
-          <div class="timer-sub" id="timer-sub">0h 0m 0s</div>
-        </div>
-      </div>
-
-      <div class="streak-row">
-        <div class="streak-item">
-          <div class="streak-num" id="streak-days">0</div>
-          <div class="streak-lbl">Day Streak</div>
-        </div>
-        <div class="streak-item">
-          <div class="streak-num" id="urges-resisted" style="color:var(--accent)">0</div>
-          <div class="streak-lbl">Urges Beaten</div>
-        </div>
-        <div class="streak-item">
-          <div class="streak-num" id="money-saved" style="color:var(--gold)">₹0</div>
-          <div class="streak-lbl">Saved</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Quote of the day -->
-    <div class="section">
-      <div class="quote-card" id="quote-card">
-        <div class="quote-text" id="quote-text">Loading your daily quote...</div>
-        <div class="quote-author" id="quote-author">— ...</div>
-      </div>
-    </div>
-
-    <!-- Stats -->
-    <div class="section">
-      <div class="section-title">Your Progress</div>
-      <div class="cards-2col">
-        <div class="card" onclick="switchPage('insights')">
-          <div class="card-icon">📊</div>
-          <div class="card-label">Days Clean</div>
-          <div class="card-value green" id="stat-days">0</div>
-        </div>
-        <div class="card" onclick="showModal('modal-savings')">
-          <div class="card-icon">💰</div>
-          <div class="card-label">Money Saved</div>
-          <div class="card-value gold" id="stat-money">₹0</div>
-        </div>
-        <div class="card" onclick="showModal('modal-urge')">
-          <div class="card-icon">💪</div>
-          <div class="card-label">Urges Beaten</div>
-          <div class="card-value" id="stat-urges">0</div>
-        </div>
-        <div class="card" onclick="switchPage('milestones')">
-          <div class="card-icon">🏆</div>
-          <div class="card-label">Next Badge</div>
-          <div class="card-value" id="stat-next-badge">Loading...</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Craving Toolkit -->
-    <div class="section">
-      <div class="section-title">Craving Toolkit</div>
-      <div class="toolkit-grid">
-        <div class="tool-card" onclick="showModal('modal-breathe')">
-          <div class="tool-icon">🫁</div>
-          <div class="tool-name">Deep Breathe</div>
-        </div>
-        <div class="tool-card" onclick="showModal('modal-grounding')">
-          <div class="tool-icon">🌱</div>
-          <div class="tool-name">5-4-3-2-1</div>
-        </div>
-        <div class="tool-card" onclick="showModal('modal-distract')">
-          <div class="tool-icon">🎯</div>
-          <div class="tool-name">Distract Me</div>
-        </div>
-        <div class="tool-card" onclick="showModal('modal-affirmation')">
-          <div class="tool-icon">✨</div>
-          <div class="tool-name">Affirmation</div>
-        </div>
-        <div class="tool-card" onclick="showModal('modal-urge')">
-          <div class="tool-icon">😤</div>
-          <div class="tool-name">Log Urge</div>
-        </div>
-        <div class="tool-card" onclick="showModal('modal-journal')">
-          <div class="tool-icon">📓</div>
-          <div class="tool-name">Journal</div>
-        </div>
-      </div>
-    </div>
-
-  </div><!-- /page-home -->
-
-
-  <!-- ── INSIGHTS PAGE ── -->
-  <div id="page-insights" class="page">
-    <div style="padding:20px 20px 12px">
-      <h2 style="font-family:var(--font-display);font-size:26px">Your Insights</h2>
-      <p style="color:var(--muted);font-size:13px;margin-top:4px">Progress at a glance</p>
-    </div>
-
-    <div class="section">
-      <div class="insight-card">
-        <div class="insight-header">
-          <span class="insight-title">Clean Days This Month</span>
-          <span class="insight-period" id="insights-month"></span>
-        </div>
-        <div class="bar-chart" id="bar-chart"></div>
-      </div>
-
-      <div class="insight-card">
-        <div class="insight-header">
-          <span class="insight-title">Your Stats</span>
-        </div>
-        <div class="progress-stat">
-          <span class="ps-label">Total Days Sober</span>
-          <span class="ps-val good" id="ins-days">0</span>
-        </div>
-        <div class="progress-stat">
-          <span class="ps-label">Longest Streak</span>
-          <span class="ps-val gold" id="ins-streak">0 days</span>
-        </div>
-        <div class="progress-stat">
-          <span class="ps-label">Urges Resisted</span>
-          <span class="ps-val good" id="ins-urges">0</span>
-        </div>
-        <div class="progress-stat">
-          <span class="ps-label">Journal Entries</span>
-          <span class="ps-val" id="ins-journal">0</span>
-        </div>
-        <div class="progress-stat">
-          <span class="ps-label">Money Saved</span>
-          <span class="ps-val gold" id="ins-money">₹0</span>
-        </div>
-        <div class="progress-stat">
-          <span class="ps-label">Hours Reclaimed</span>
-          <span class="ps-val good" id="ins-hours">0 hrs</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-  <!-- ── MILESTONES PAGE ── -->
-  <div id="page-milestones" class="page">
-    <div style="padding:20px 20px 12px">
-      <h2 style="font-family:var(--font-display);font-size:26px">Milestones</h2>
-      <p style="color:var(--muted);font-size:13px;margin-top:4px">Celebrate every win</p>
-    </div>
-    <div class="section">
-      <div class="milestone-list" id="milestone-list"></div>
-    </div>
-  </div>
-
-
-  <!-- ── JOURNAL PAGE ── -->
-  <div id="page-journal" class="page">
-    <div style="padding:20px 20px 12px">
-      <h2 style="font-family:var(--font-display);font-size:26px">Journal</h2>
-      <p style="color:var(--muted);font-size:13px;margin-top:4px">Write your thoughts</p>
-    </div>
-    <div class="section">
-      <div class="journal-btn" onclick="showModal('modal-journal')">
-        <div class="journal-icon">✍️</div>
-        <div class="journal-text">
-          <div class="journal-title">New Entry</div>
-          <div class="journal-sub">Log your mood and reflections</div>
-        </div>
-      </div>
-      <div class="journal-entries" id="journal-entries"></div>
-    </div>
-  </div>
-
-
-  <!-- ── SETTINGS PAGE ── -->
-  <div id="page-settings" class="page">
-    <div style="padding:20px 20px 12px">
-      <h2 style="font-family:var(--font-display);font-size:26px">Settings</h2>
-    </div>
-
-    <div class="settings-group">
-      <div class="settings-group-title">Profile</div>
-      <div class="settings-item" onclick="showModal('modal-edit-profile')">
-        <div class="settings-item-left">
-          <span class="settings-item-icon">👤</span>
-          <div>
-            <div class="settings-item-text" id="settings-name-label">Your Name</div>
-            <div class="settings-item-sub">Tap to edit</div>
+    <div class="page on" id="pg-home">
+      <div class="hero">
+        <div class="sob-lbl">Sober since</div>
+        <div class="add-badge" id="add-badge">🔓 …</div>
+        <div class="ring-wrap">
+          <svg width="190" height="190" viewBox="0 0 190 190">
+            <defs><linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#4ade80"/><stop offset="100%" stop-color="#34d399"/>
+            </linearGradient></defs>
+            <circle class="ring-track" cx="95" cy="95" r="84"/>
+            <circle class="ring-prog" id="ring-p" cx="95" cy="95" r="84" stroke-dasharray="528" stroke-dashoffset="528"/>
+          </svg>
+          <div class="t-inner">
+            <div class="t-main" id="t-days">0d</div>
+            <div class="t-sub" id="t-hms">0h 0m 0s</div>
           </div>
         </div>
-        <span class="settings-item-right">›</span>
-      </div>
-      <div class="settings-item" onclick="showModal('modal-edit-addiction')">
-        <div class="settings-item-left">
-          <span class="settings-item-icon">🎯</span>
-          <div>
-            <div class="settings-item-text" id="settings-addiction-label">Quitting</div>
-            <div class="settings-item-sub">Tap to change</div>
-          </div>
+        <div class="streak-row">
+          <div class="s-item"><div class="s-num green" id="s-days">0</div><div class="s-lbl">Days</div></div>
+          <div class="s-item"><div class="s-num" style="color:var(--accent)" id="s-urges">0</div><div class="s-lbl">Urges beat</div></div>
+          <div class="s-item"><div class="s-num gold" id="s-money">₹0</div><div class="s-lbl">Saved</div></div>
         </div>
-        <span class="settings-item-right">›</span>
       </div>
-      <div class="settings-item" onclick="showModal('modal-edit-cost')">
-        <div class="settings-item-left">
-          <span class="settings-item-icon">💰</span>
-          <div>
-            <div class="settings-item-text" id="settings-cost-label">Daily Savings</div>
-            <div class="settings-item-sub">Set daily cost</div>
-          </div>
+      <div class="sec">
+        <div class="qcard"><div class="q-text" id="q-text">…</div><div class="q-auth" id="q-auth"></div></div>
+        <div class="stitle">Progress</div>
+        <div class="grid2" style="margin-bottom:18px">
+          <div class="card" onclick="switchPage('insights')"><div class="card-ico">📊</div><div class="card-lbl">Days Clean</div><div class="card-val green" id="c-days">0</div></div>
+          <div class="card" onclick="openModal('m-savings')"><div class="card-ico">💰</div><div class="card-lbl">Money Saved</div><div class="card-val gold" id="c-money">₹0</div></div>
+          <div class="card" onclick="openModal('m-urge')"><div class="card-ico">💪</div><div class="card-lbl">Urges Beaten</div><div class="card-val" id="c-urges">0</div></div>
+          <div class="card" onclick="switchPage('milestones')"><div class="card-ico">🏆</div><div class="card-lbl">Next Badge</div><div class="card-val" id="c-next" style="font-size:14px">…</div></div>
         </div>
-        <span class="settings-item-right">›</span>
+        <div class="stitle">Craving Toolkit</div>
+        <div class="tgrid">
+          <div class="tcrd" onclick="openModal('m-breathe')"><div class="t-ico">🫁</div><div class="t-nm">Breathe</div></div>
+          <div class="tcrd" onclick="openModal('m-ground')"><div class="t-ico">🌱</div><div class="t-nm">5-4-3-2-1</div></div>
+          <div class="tcrd" onclick="openModal('m-distract')"><div class="t-ico">🎯</div><div class="t-nm">Distract</div></div>
+          <div class="tcrd" onclick="openModal('m-affirm')"><div class="t-ico">✨</div><div class="t-nm">Affirm</div></div>
+          <div class="tcrd" onclick="openModal('m-urge')"><div class="t-ico">😤</div><div class="t-nm">Log Urge</div></div>
+          <div class="tcrd" onclick="openModal('m-journal')"><div class="t-ico">📓</div><div class="t-nm">Journal</div></div>
+        </div>
       </div>
     </div>
 
-    <div class="settings-group">
-      <div class="settings-group-title">Preferences</div>
-      <div class="settings-item">
-        <div class="settings-item-left">
-          <span class="settings-item-icon">🔔</span>
-          <div>
-            <div class="settings-item-text">Daily Reminders</div>
-            <div class="settings-item-sub">Check-in notifications</div>
-          </div>
+    <div class="page" id="pg-insights">
+      <div style="padding:18px 18px 10px"><div style="font-family:var(--display);font-size:24px">Insights</div><div style="color:var(--muted);font-size:12px;margin-top:3px">Your journey at a glance</div></div>
+      <div class="sec">
+        <div class="ins-card">
+          <div class="ins-hdr"><span class="ins-title">Last 7 days</span><span id="ins-month" style="font-size:11px;color:var(--muted)"></span></div>
+          <div class="bar-wrap" id="bar-chart"></div>
         </div>
-        <button class="toggle on" id="toggle-notif" onclick="toggleNotif()"></button>
-      </div>
-      <div class="settings-item">
-        <div class="settings-item-left">
-          <span class="settings-item-icon">🌙</span>
-          <div>
-            <div class="settings-item-text">Dark Mode</div>
-            <div class="settings-item-sub">Always on for focus</div>
-          </div>
+        <div class="ins-card">
+          <div class="p-row"><span class="p-lbl">Days sober</span><span class="p-val green" id="i-days">0</span></div>
+          <div class="p-row"><span class="p-lbl">Longest streak</span><span class="p-val gold" id="i-streak">0 days</span></div>
+          <div class="p-row"><span class="p-lbl">Urges resisted</span><span class="p-val green" id="i-urges">0</span></div>
+          <div class="p-row"><span class="p-lbl">Journal entries</span><span class="p-val" id="i-journal">0</span></div>
+          <div class="p-row"><span class="p-lbl">Money saved</span><span class="p-val gold" id="i-money">₹0</span></div>
+          <div class="p-row"><span class="p-lbl">Hours reclaimed</span><span class="p-val green" id="i-hours">0</span></div>
         </div>
-        <button class="toggle on"></button>
       </div>
     </div>
 
-    <div class="settings-group">
-      <div class="settings-group-title">Data</div>
-      <div class="settings-item" onclick="exportData()">
-        <div class="settings-item-left">
-          <span class="settings-item-icon">📤</span>
-          <div><div class="settings-item-text">Export Data</div></div>
+    <div class="page" id="pg-milestones">
+      <div style="padding:18px 18px 10px"><div style="font-family:var(--display);font-size:24px">Milestones</div><div style="color:var(--muted);font-size:12px;margin-top:3px">Celebrate every win</div></div>
+      <div class="sec"><div class="mlist" id="mile-list"></div></div>
+    </div>
+
+    <div class="page" id="pg-journal">
+      <div style="padding:18px 18px 10px"><div style="font-family:var(--display);font-size:24px">Journal</div><div style="color:var(--muted);font-size:12px;margin-top:3px">Your thoughts, your journey</div></div>
+      <div class="sec">
+        <div class="j-add" onclick="openModal('m-journal')">
+          <span style="font-size:30px">✍️</span>
+          <div><div style="font-size:14px;font-weight:500">New Entry</div><div style="font-size:12px;color:var(--muted);margin-top:2px">Log mood &amp; reflections</div></div>
         </div>
-        <span class="settings-item-right">›</span>
-      </div>
-      <div class="settings-item" onclick="confirmReset()">
-        <div class="settings-item-left">
-          <span class="settings-item-icon" style="color:var(--red)">⚠️</span>
-          <div><div class="settings-item-text" style="color:var(--red)">Reset Everything</div></div>
-        </div>
-        <span class="settings-item-right" style="color:var(--red)">›</span>
+        <div class="j-entries" id="j-list"></div>
       </div>
     </div>
 
-    <div style="text-align:center;padding:20px;color:var(--muted);font-size:12px">
-      Unshackled v1.0 • Built with 💚 for your freedom
+    <div class="page" id="pg-settings">
+      <div style="padding:18px 18px 10px"><div style="font-family:var(--display);font-size:24px">Settings</div></div>
+      <div style="height:16px"></div>
+      <div class="sg-title">Profile</div>
+      <div class="si" onclick="openModal('m-ep')"><div class="si-l"><span class="si-ico">👤</span><div><div class="si-txt" id="set-name">Name</div><div class="si-sub">Tap to edit</div></div></div><span class="si-r">›</span></div>
+      <div class="si" onclick="openModal('m-ea')"><div class="si-l"><span class="si-ico">🎯</span><div><div class="si-txt" id="set-add">Addiction</div><div class="si-sub">Tap to change</div></div></div><span class="si-r">›</span></div>
+      <div class="si" onclick="openModal('m-ec')"><div class="si-l"><span class="si-ico">💰</span><div><div class="si-txt" id="set-cost">Daily cost</div><div class="si-sub">For savings calc</div></div></div><span class="si-r">›</span></div>
+      <div style="height:16px"></div>
+      <div class="sg-title">Data</div>
+      <div class="si" onclick="exportData()"><div class="si-l"><span class="si-ico">📤</span><div><div class="si-txt">Export Data</div></div></div><span class="si-r">›</span></div>
+      <div class="si" onclick="resetAll()"><div class="si-l"><span class="si-ico">⚠️</span><div><div class="si-txt" style="color:var(--red)">Reset Everything</div></div></div><span class="si-r" style="color:var(--red)">›</span></div>
+      <div style="text-align:center;padding:28px 18px;color:var(--muted);font-size:12px">Unshackled v2.0 · Built with 💚</div>
     </div>
+
   </div>
-
-  <!-- Bottom Nav -->
-  <nav class="bottom-nav">
-    <button class="nav-item active" id="nav-home" onclick="switchPage('home')">
-      <span class="nav-icon">🏠</span><span class="nav-label">Home</span>
-    </button>
-    <button class="nav-item" id="nav-insights" onclick="switchPage('insights')">
-      <span class="nav-icon">📊</span><span class="nav-label">Insights</span>
-    </button>
-    <button class="nav-item" id="nav-milestones" onclick="switchPage('milestones')">
-      <span class="nav-icon">🏆</span><span class="nav-label">Badges</span>
-    </button>
-    <button class="nav-item" id="nav-journal" onclick="switchPage('journal')">
-      <span class="nav-icon">📓</span><span class="nav-label">Journal</span>
-    </button>
-    <button class="nav-item" id="nav-settings" onclick="switchPage('settings')">
-      <span class="nav-icon">⚙️</span><span class="nav-label">Settings</span>
-    </button>
+  <nav class="nav">
+    <button class="ni on" id="ni-home" onclick="switchPage('home')"><span class="ni-ico">🏠</span><span class="ni-lbl">Home</span></button>
+    <button class="ni" id="ni-insights" onclick="switchPage('insights')"><span class="ni-ico">📊</span><span class="ni-lbl">Insights</span></button>
+    <button class="ni" id="ni-milestones" onclick="switchPage('milestones')"><span class="ni-ico">🏆</span><span class="ni-lbl">Badges</span></button>
+    <button class="ni" id="ni-journal" onclick="switchPage('journal')"><span class="ni-ico">📓</span><span class="ni-lbl">Journal</span></button>
+    <button class="ni" id="ni-settings" onclick="switchPage('settings')"><span class="ni-ico">⚙️</span><span class="ni-lbl">Settings</span></button>
   </nav>
-</div><!-- /screen-app -->
+</div>
 
-
-<!-- ══════════════════════════════════
-     MODALS
-══════════════════════════════════ -->
-
-<!-- Breathe Modal -->
-<div class="modal-overlay" id="modal-breathe">
+<!-- MODALS -->
+<div class="overlay" id="m-breathe">
   <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Deep Breathing</div>
-    <div class="breathe-container">
-      <div class="breathe-circle" id="breathe-circle">🫁</div>
-      <div class="breathe-text" id="breathe-text">Get Ready...</div>
-      <div class="breathe-count" id="breathe-count">4</div>
-      <p style="color:var(--muted);font-size:13px;margin-top:12px">Box breathing technique — reduces cravings in minutes</p>
+    <div class="mhandle"></div><div class="mtitle">Deep Breathing 🫁</div>
+    <div class="bc">
+      <div class="bcircle" id="bc">🫁</div>
+      <div class="b-txt" id="b-txt">Ready?</div>
+      <div class="b-cnt" id="b-cnt">4</div>
+      <p style="color:var(--muted);font-size:12px;margin-top:10px">Box breathing · calms cravings in minutes</p>
     </div>
-    <button class="btn btn-primary" id="breathe-btn" onclick="startBreathing()">Start Exercise</button>
-    <button class="btn btn-ghost" onclick="closeModal('modal-breathe');stopBreathing()">Close</button>
+    <button class="btn btn-p" id="b-start-btn" onclick="startBreath()">Start</button>
+    <button class="btn btn-g" onclick="closeModal('m-breathe')">Close</button>
   </div>
 </div>
 
-<!-- Grounding Modal -->
-<div class="modal-overlay" id="modal-grounding">
+<div class="overlay" id="m-ground">
   <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">5-4-3-2-1 Grounding</div>
-    <p style="color:var(--muted2);font-size:14px;margin-bottom:20px">Bring yourself back to the present moment</p>
-    <div id="grounding-steps">
-      <div style="background:var(--surface);border-radius:12px;padding:14px;margin-bottom:10px">
-        <div style="font-size:24px;margin-bottom:6px">👁️ <strong>5 things you can SEE</strong></div>
-        <p style="color:var(--muted);font-size:13px">Look around — name 5 objects visible to you right now</p>
-      </div>
-      <div style="background:var(--surface);border-radius:12px;padding:14px;margin-bottom:10px">
-        <div style="font-size:24px;margin-bottom:6px">🖐️ <strong>4 things you can TOUCH</strong></div>
-        <p style="color:var(--muted);font-size:13px">Feel the texture of objects around you</p>
-      </div>
-      <div style="background:var(--surface);border-radius:12px;padding:14px;margin-bottom:10px">
-        <div style="font-size:24px;margin-bottom:6px">👂 <strong>3 things you can HEAR</strong></div>
-        <p style="color:var(--muted);font-size:13px">Listen — notice sounds you were tuning out</p>
-      </div>
-      <div style="background:var(--surface);border-radius:12px;padding:14px;margin-bottom:10px">
-        <div style="font-size:24px;margin-bottom:6px">👃 <strong>2 things you can SMELL</strong></div>
-        <p style="color:var(--muted);font-size:13px">Breathe in — identify two scents around you</p>
-      </div>
-      <div style="background:var(--surface);border-radius:12px;padding:14px;margin-bottom:20px">
-        <div style="font-size:24px;margin-bottom:6px">👅 <strong>1 thing you can TASTE</strong></div>
-        <p style="color:var(--muted);font-size:13px">What taste is in your mouth right now?</p>
-      </div>
+    <div class="mhandle"></div><div class="mtitle">5-4-3-2-1 Grounding 🌱</div>
+    <p style="color:var(--muted2);font-size:13px;margin-bottom:16px">Come back to the present moment</p>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px">
+      <div style="background:var(--surf);border-radius:11px;padding:13px"><b>👁️ 5 things you can SEE</b><p style="color:var(--muted);font-size:12px;margin-top:4px">Look around and name 5 visible objects</p></div>
+      <div style="background:var(--surf);border-radius:11px;padding:13px"><b>🖐️ 4 things you can TOUCH</b><p style="color:var(--muted);font-size:12px;margin-top:4px">Feel the texture of things near you</p></div>
+      <div style="background:var(--surf);border-radius:11px;padding:13px"><b>👂 3 things you can HEAR</b><p style="color:var(--muted);font-size:12px;margin-top:4px">Listen closely to sounds around you</p></div>
+      <div style="background:var(--surf);border-radius:11px;padding:13px"><b>👃 2 things you can SMELL</b><p style="color:var(--muted);font-size:12px;margin-top:4px">Notice any scents in your environment</p></div>
+      <div style="background:var(--surf);border-radius:11px;padding:13px"><b>👅 1 thing you can TASTE</b><p style="color:var(--muted);font-size:12px;margin-top:4px">What taste is in your mouth right now?</p></div>
     </div>
-    <button class="btn btn-primary" onclick="closeModal('modal-grounding');showToast('✅ Grounding complete! You got this.')">Done — I Feel Better</button>
-    <button class="btn btn-ghost" onclick="closeModal('modal-grounding')">Close</button>
+    <button class="btn btn-p" onclick="closeModal('m-ground');toast('✅ Grounding complete! You got this.')">Done — I Feel Better</button>
+    <button class="btn btn-g" onclick="closeModal('m-ground')">Close</button>
   </div>
 </div>
 
-<!-- Distract Modal -->
-<div class="modal-overlay" id="modal-distract">
+<div class="overlay" id="m-distract">
   <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Distract Yourself 🎯</div>
-    <p style="color:var(--muted2);font-size:14px;margin-bottom:20px">Cravings last only 15–20 minutes. Try one of these:</p>
-    <div id="distract-list" style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px"></div>
-    <button class="btn btn-ghost" onclick="shuffleDistractions()">🔀 Shuffle Ideas</button>
-    <button class="btn btn-primary" style="margin-top:10px" onclick="closeModal('modal-distract');showToast('🎯 Go do it! You can beat this craving.')">Got It, Let&apos;s Go!</button>
+    <div class="mhandle"></div><div class="mtitle">Distract Yourself 🎯</div>
+    <p style="color:var(--muted2);font-size:13px;margin-bottom:14px">Cravings last only 15–20 min. Pick one:</p>
+    <div class="dlist" id="d-list"></div>
+    <button class="btn btn-g" onclick="fillDistract()">🔀 Shuffle</button>
+    <button class="btn btn-p" style="margin-top:8px" onclick="closeModal('m-distract');toast('🎯 Go do it! Beat this craving.')">Let's Go!</button>
   </div>
 </div>
 
-<!-- Affirmation Modal -->
-<div class="modal-overlay" id="modal-affirmation">
+<div class="overlay" id="m-affirm">
   <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Your Affirmation ✨</div>
-    <div class="quote-card" style="margin-bottom:20px">
-      <div class="quote-text" id="affirmation-text">Loading...</div>
+    <div class="mhandle"></div><div class="mtitle">Affirmation ✨</div>
+    <div class="af-card"><div class="af-txt" id="af-txt">…</div></div>
+    <button class="btn btn-g" onclick="fillAffirm()">🔀 New one</button>
+    <button class="btn btn-p" style="margin-top:8px" onclick="closeModal('m-affirm');toast('✨ You are stronger than this.')">I Believe This</button>
+  </div>
+</div>
+
+<div class="overlay" id="m-urge">
+  <div class="modal">
+    <div class="mhandle"></div><div class="mtitle">Urge Tracker 💪</div>
+    <p style="color:var(--muted2);font-size:13px;margin-bottom:14px">Every urge you resist is a victory.</p>
+    <div class="uc">
+      <button class="u-btn u-dec" onclick="chgUrge(-1)">−</button>
+      <div class="u-num" id="u-num">0</div>
+      <button class="u-btn u-inc" onclick="chgUrge(1)">+</button>
     </div>
-    <button class="btn btn-ghost" onclick="shuffleAffirmation()">🔀 New Affirmation</button>
-    <button class="btn btn-primary" style="margin-top:10px" onclick="closeModal('modal-affirmation');showToast('✨ Believe it. You are stronger than this.')">I Believe This</button>
+    <p style="color:var(--muted);font-size:12px;text-align:center;margin-bottom:16px">urges resisted today</p>
+    <button class="btn btn-p" onclick="saveUrge()">Save 💪</button>
+    <button class="btn btn-g" onclick="closeModal('m-urge')">Cancel</button>
   </div>
 </div>
 
-<!-- Log Urge Modal -->
-<div class="modal-overlay" id="modal-urge">
+<div class="overlay" id="m-journal">
   <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Urge Tracker 💪</div>
-    <p style="color:var(--muted2);font-size:14px;margin-bottom:16px">Every urge you resist is a victory. Log it.</p>
-    <div class="urge-counter">
-      <button class="urge-btn urge-dec" onclick="changeUrge(-1)">−</button>
-      <div class="urge-num" id="urge-display">0</div>
-      <button class="urge-btn urge-inc" onclick="changeUrge(1)">+</button>
+    <div class="mhandle"></div><div class="mtitle">Journal Entry 📓</div>
+    <p style="color:var(--muted2);font-size:13px;margin-bottom:14px">How are you feeling?</p>
+    <div class="mood-row" id="mood-row">
+      <div class="mb on" data-m="😊" onclick="pickMood(this)">😊</div>
+      <div class="mb" data-m="😐" onclick="pickMood(this)">😐</div>
+      <div class="mb" data-m="😔" onclick="pickMood(this)">😔</div>
+      <div class="mb" data-m="😤" onclick="pickMood(this)">😤</div>
+      <div class="mb" data-m="💪" onclick="pickMood(this)">💪</div>
+      <div class="mb" data-m="🙏" onclick="pickMood(this)">🙏</div>
     </div>
-    <p style="color:var(--muted);font-size:13px;text-align:center;margin-bottom:20px">urges resisted today</p>
-    <button class="btn btn-primary" onclick="saveUrges()">Save & Close 💪</button>
-    <button class="btn btn-ghost" onclick="closeModal('modal-urge')">Cancel</button>
+    <textarea class="field" id="j-in" rows="5" placeholder="Write anything — your thoughts, what triggered you, how you overcame it..."></textarea>
+    <button class="btn btn-p" style="margin-top:14px" onclick="saveJournal()">Save Entry</button>
+    <button class="btn btn-g" onclick="closeModal('m-journal')">Cancel</button>
   </div>
 </div>
 
-<!-- Journal Modal -->
-<div class="modal-overlay" id="modal-journal">
+<div class="overlay" id="m-relapse">
   <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Journal Entry 📓</div>
-    <p style="color:var(--muted2);font-size:14px;margin-bottom:16px">How are you feeling right now?</p>
-    <div class="mood-row" id="mood-selector">
-      <div class="mood-btn" data-mood="😊" onclick="selectMood(this)">😊</div>
-      <div class="mood-btn" data-mood="😐" onclick="selectMood(this)">😐</div>
-      <div class="mood-btn" data-mood="😔" onclick="selectMood(this)">😔</div>
-      <div class="mood-btn" data-mood="😤" onclick="selectMood(this)">😤</div>
-      <div class="mood-btn" data-mood="💪" onclick="selectMood(this)">💪</div>
-    </div>
-    <textarea class="textarea-field" id="journal-input" rows="5" placeholder="Write anything — your thoughts, what triggered you, how you overcame it..."></textarea>
-    <button class="btn btn-primary" style="margin-top:14px" onclick="saveJournal()">Save Entry</button>
-    <button class="btn btn-ghost" onclick="closeModal('modal-journal')">Cancel</button>
+    <div class="mhandle"></div><div class="mtitle">Log a Setback 🔁</div>
+    <div class="rw">⚠️ Relapses are a normal part of recovery. This doesn't erase your progress — every day you tried counts. Be kind to yourself.</div>
+    <p style="color:var(--muted2);font-size:13px;margin-bottom:18px">This will reset your timer. Are you sure?</p>
+    <button class="btn" style="background:rgba(248,113,113,.12);color:var(--red);border:1px solid rgba(248,113,113,.3)" onclick="doRelapse()">Yes, Reset My Timer</button>
+    <button class="btn btn-p" style="margin-top:8px" onclick="closeModal('m-relapse')">I Haven't Relapsed</button>
   </div>
 </div>
 
-<!-- Relapse Modal -->
-<div class="modal-overlay" id="modal-relapse">
+<div class="overlay" id="m-savings">
   <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Log a Setback 🔁</div>
-    <div class="relapse-warning">
-      ⚠️ Relapses are a normal part of recovery. This doesn't erase your progress — it's data to learn from. Be kind to yourself.
-    </div>
-    <p style="color:var(--muted2);font-size:14px;margin-bottom:20px">Resetting your timer will restart your streak. Are you sure?</p>
-    <button class="btn" style="background:rgba(248,113,113,0.15);color:var(--red);border:1px solid rgba(248,113,113,0.3)" onclick="confirmRelapse()">Yes, Reset My Timer</button>
-    <button class="btn btn-primary" style="margin-top:10px" onclick="closeModal('modal-relapse')">I Haven't Relapsed — Close</button>
+    <div class="mhandle"></div><div class="mtitle">Money Saved 💰</div>
+    <div class="sav-big"><div class="sav-amt" id="sav-amt">₹0</div><div style="font-size:12px;color:var(--muted);margin-top:4px">Total savings since you quit</div></div>
+    <div id="sav-break" style="background:var(--surf);border-radius:var(--r);padding:14px;margin-bottom:14px"></div>
+    <button class="btn btn-p" onclick="closeModal('m-savings')">Close</button>
   </div>
 </div>
 
-<!-- Savings Modal -->
-<div class="modal-overlay" id="modal-savings">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Money Saved 💰</div>
-    <div class="savings-display">
-      <div class="savings-amount" id="modal-savings-amount">₹0</div>
-      <div class="savings-label">Total savings since you quit</div>
-    </div>
-    <div id="savings-breakdown" style="background:var(--surface);border-radius:12px;padding:16px;margin-bottom:16px"></div>
-    <button class="btn btn-primary" onclick="closeModal('modal-savings')">Amazing! Close</button>
-  </div>
-</div>
+<div class="overlay" id="m-ep"><div class="modal"><div class="mhandle"></div><div class="mtitle">Edit Name</div><input class="field" id="ep-in" placeholder="Your name..."/><button class="btn btn-p" style="margin-top:14px" onclick="saveEP()">Save</button><button class="btn btn-g" onclick="closeModal('m-ep')">Cancel</button></div></div>
+<div class="overlay" id="m-ea"><div class="modal"><div class="mhandle"></div><div class="mtitle">Change Addiction</div><input class="field" id="ea-in" placeholder="e.g. Smoking"/><button class="btn btn-p" style="margin-top:14px" onclick="saveEA()">Save</button><button class="btn btn-g" onclick="closeModal('m-ea')">Cancel</button></div></div>
+<div class="overlay" id="m-ec"><div class="modal"><div class="mhandle"></div><div class="mtitle">Daily Cost (₹)</div><input class="field" id="ec-in" type="number" inputmode="numeric" placeholder="e.g. 200"/><button class="btn btn-p" style="margin-top:14px" onclick="saveEC()">Save</button><button class="btn btn-g" onclick="closeModal('m-ec')">Cancel</button></div></div>
 
-<!-- Edit Profile Modal -->
-<div class="modal-overlay" id="modal-edit-profile">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Edit Name</div>
-    <input class="input-field" id="edit-name-input" placeholder="Your name..."/>
-    <button class="btn btn-primary" style="margin-top:14px" onclick="saveEditProfile()">Save</button>
-    <button class="btn btn-ghost" onclick="closeModal('modal-edit-profile')">Cancel</button>
-  </div>
-</div>
-
-<!-- Edit Addiction Modal -->
-<div class="modal-overlay" id="modal-edit-addiction">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Change Addiction</div>
-    <input class="input-field" id="edit-addiction-input" placeholder="e.g. Smoking"/>
-    <button class="btn btn-primary" style="margin-top:14px" onclick="saveEditAddiction()">Save</button>
-    <button class="btn btn-ghost" onclick="closeModal('modal-edit-addiction')">Cancel</button>
-  </div>
-</div>
-
-<!-- Edit Cost Modal -->
-<div class="modal-overlay" id="modal-edit-cost">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Daily Cost (₹)</div>
-    <input class="input-field" id="edit-cost-input" type="number" placeholder="e.g. 200" inputmode="numeric"/>
-    <button class="btn btn-primary" style="margin-top:14px" onclick="saveEditCost()">Save</button>
-    <button class="btn btn-ghost" onclick="closeModal('modal-edit-cost')">Cancel</button>
-  </div>
-</div>
-
-<!-- Toast -->
-<div class="toast" id="toast"></div>
-
+<div class="toast" id="tst"></div>
 
 <script>
-// ═══════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════
-let state = {
-  addiction: '', reason: '', name: '',
-  startTime: null, dailyCost: 0,
-  urgesResisted: 0, journalEntries: [],
-  longestStreak: 0, relapseCount: 0
-};
+const KEY='ush_v2';
+let S={name:'',addiction:'',reason:'',startTime:null,cost:0,urges:0,journal:[],longest:0,relapses:0};
+let timerID=null,breathID=null,breathOn=false,breathPhase=0;
+let selMood='😊',curUrge=0,dInstall=null,selAdd='',selWhy='';
 
-let timerInterval = null;
-let breatheInterval = null;
-let breathePhase = 0;
-let breatheCount = 4;
-let breatheRunning = false;
-let selectedMood = '😊';
-let tempUrges = 0;
-let deferredInstallPrompt = null;
-let currentUrgeDisplay = 0;
-
-const MILESTONES = [
-  { icon: '🌱', name: '1 Hour Free', desc: 'The first hour is the hardest', hours: 1/24 },
-  { icon: '🌤️', name: 'First Day', desc: '24 hours — you did it!', hours: 1 },
-  { icon: '🔥', name: 'Three Days', desc: 'Your body is already healing', hours: 3 },
-  { icon: '⚡', name: 'One Week', desc: 'A full week of freedom', hours: 7 },
-  { icon: '💎', name: 'Two Weeks', desc: 'Building new neural pathways', hours: 14 },
-  { icon: '🏅', name: 'One Month', desc: 'A month of resilience', hours: 30 },
-  { icon: '🥇', name: '90 Days', desc: 'Scientifically, a new habit is formed', hours: 90 },
-  { icon: '🚀', name: 'Six Months', desc: 'Half a year of freedom', hours: 180 },
-  { icon: '👑', name: 'One Year', desc: 'A full year — you are unstoppable', hours: 365 },
-];
-
-const QUOTES = [
-  { text: "The secret of getting ahead is getting started.", author: "Mark Twain" },
-  { text: "You don't have to be great to start, but you have to start to be great.", author: "Zig Ziglar" },
-  { text: "Every moment is a fresh beginning.", author: "T.S. Eliot" },
-  { text: "Strength does not come from what you can do. It comes from overcoming the things you once thought you couldn't.", author: "Rikki Rogers" },
-  { text: "Rock bottom became the solid foundation on which I rebuilt my life.", author: "J.K. Rowling" },
-  { text: "It does not matter how slowly you go as long as you do not stop.", author: "Confucius" },
-  { text: "You are stronger than you think.", author: "A.A. Milne" },
-  { text: "Recovery is not a race. You don't have to feel guilty if it takes you longer than you thought.", author: "Anonymous" },
-  { text: "One day at a time.", author: "Recovery Wisdom" },
-  { text: "The pain you feel today will be the strength you feel tomorrow.", author: "Unknown" },
-  { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
-  { text: "First forget inspiration. Habit is more dependable.", author: "Octavia Butler" },
-];
-
-const AFFIRMATIONS = [
-  "I am stronger than my cravings.",
-  "Every urge I resist makes me more powerful.",
-  "I choose health and freedom over temporary pleasure.",
-  "My past does not define my future.",
-  "I am proud of every minute I stay clean.",
-  "I deserve a life of freedom and clarity.",
-  "This craving is temporary. My strength is permanent.",
-  "I am not my addiction. I am so much more.",
-  "Each day sober is a gift I give to myself.",
-  "I have the power to change my story.",
-];
-
-const DISTRACTIONS = [
-  "🚶 Go for a 10-minute walk outside",
-  "💧 Drink a large glass of cold water",
-  "📞 Call or text a supportive friend",
-  "🎵 Listen to your favorite upbeat song",
-  "🧹 Clean or tidy one area of your space",
-  "✍️ Write down 3 things you're grateful for",
-  "🧊 Hold an ice cube in your hand",
-  "🍎 Eat a healthy snack like fruit",
-  "🎮 Play a quick mobile game for 5 minutes",
-  "📚 Read 5 pages of a book",
-  "🧘 Do 10 jumping jacks or push-ups",
-  "🐾 Spend time with a pet",
-  "🌿 Step outside and take 5 deep breaths",
-  "🎨 Doodle or sketch something",
-  "🧩 Solve a puzzle or riddle",
-];
-
-// ═══════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════
-function init() {
-  const saved = localStorage.getItem('unshackled_state');
-  if (saved) {
-    try {
-      state = { ...state, ...JSON.parse(saved) };
-      if (state.startTime && state.name) {
-        showApp();
-        return;
-      }
-    } catch(e) {}
-  }
-  document.getElementById('screen-onboarding').classList.add('active');
+function boot(){
+  try{const d=localStorage.getItem(KEY);if(d)S={...S,...JSON.parse(d)};}catch(e){}
+  if(S.startTime&&S.name){showApp();return;}
+  document.getElementById('ob').classList.add('active');
 }
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
 
-function saveState() {
-  localStorage.setItem('unshackled_state', JSON.stringify(state));
-}
-
-// ═══════════════════════════════════════
-// ONBOARDING
-// ═══════════════════════════════════════
-let currentStep = 1;
-let selectedAddiction = '';
-let selectedReason = '';
-
-document.querySelectorAll('#addiction-chips .chip').forEach(chip => {
-  chip.addEventListener('click', () => {
-    document.querySelectorAll('#addiction-chips .chip').forEach(c => c.classList.remove('sel'));
-    chip.classList.add('sel');
-    selectedAddiction = chip.dataset.val;
-    document.getElementById('custom-addiction').value = '';
-  });
+// onboarding chip selection
+document.querySelectorAll('#add-chips .chip').forEach(c=>c.addEventListener('click',()=>{
+  document.querySelectorAll('#add-chips .chip').forEach(x=>x.classList.remove('on'));
+  c.classList.add('on');selAdd=c.dataset.v;
+  document.getElementById('custom-add').value='';
+}));
+document.querySelectorAll('#why-chips .chip').forEach(c=>c.addEventListener('click',()=>{
+  document.querySelectorAll('#why-chips .chip').forEach(x=>x.classList.remove('on'));
+  c.classList.add('on');selWhy=c.dataset.v;
+}));
+document.getElementById('custom-add').addEventListener('input',function(){
+  if(this.value.trim()){document.querySelectorAll('#add-chips .chip').forEach(x=>x.classList.remove('on'));selAdd='';}
 });
 
-document.querySelectorAll('#reason-chips .chip').forEach(chip => {
-  chip.addEventListener('click', () => {
-    document.querySelectorAll('#reason-chips .chip').forEach(c => c.classList.remove('sel'));
-    chip.classList.add('sel');
-    selectedReason = chip.dataset.val;
-  });
-});
-
-function nextStep(step) {
-  if (step === 1) {
-    const custom = document.getElementById('custom-addiction').value.trim();
-    if (custom) selectedAddiction = custom;
-    if (!selectedAddiction) { showToast('⚠️ Please select or type what you're quitting'); return; }
-  }
-  if (step === 2) {
-    const cost = parseFloat(document.getElementById('daily-cost').value) || 0;
-    state.dailyCost = cost;
-  }
-  if (step === 3) {
-    if (!selectedReason) { showToast('⚠️ Please select a reason'); return; }
-  }
-
-  document.getElementById(`step-${step}`).classList.remove('active');
-  document.getElementById(`step-${step + 1}`).classList.add('active');
-  document.getElementById(`dot-${step}`).classList.remove('active');
-  document.getElementById(`dot-${step + 1}`).classList.add('active');
-  currentStep = step + 1;
+let curStep=1;
+function goStep(from){
+  if(from===1){const cv=document.getElementById('custom-add').value.trim();if(cv)selAdd=cv;if(!selAdd){toast('⚠️ Please select or type what you\'re quitting');return;}}
+  if(from===2){S.cost=parseFloat(document.getElementById('cost-in').value)||0;}
+  if(from===3){if(!selWhy){toast('⚠️ Please pick a reason');return;}}
+  document.getElementById('s'+from).classList.remove('on');
+  document.getElementById('d'+from).classList.remove('on');
+  curStep=from+1;
+  document.getElementById('s'+curStep).classList.add('on');
+  document.getElementById('d'+curStep).classList.add('on');
+}
+function startApp(){
+  const nm=document.getElementById('name-in').value.trim()||'Friend';
+  S.name=nm;S.addiction=selAdd||'My Habit';S.reason=selWhy;S.startTime=Date.now();save();showApp();
 }
 
-function startApp() {
-  const name = document.getElementById('user-name').value.trim() || 'Friend';
-  state.name = name;
-  state.addiction = selectedAddiction || 'My Habit';
-  state.reason = selectedReason;
-  state.startTime = Date.now();
-  saveState();
-  showApp();
+function showApp(){
+  document.getElementById('ob').classList.remove('active');
+  document.getElementById('app').classList.add('active');
+  renderQuote();renderMilestones();renderJournal();renderInsights();updateSettings();
+  tick();timerID=setInterval(tick,1000);
 }
 
-// ═══════════════════════════════════════
-// APP
-// ═══════════════════════════════════════
-function showApp() {
-  document.getElementById('screen-onboarding').classList.remove('active');
-  document.getElementById('screen-app').classList.add('active');
-  updateUI();
-  startTimer();
-  renderMilestones();
-  renderJournal();
-  renderInsights();
-  renderQuote();
-  updateSettings();
-  currentUrgeDisplay = state.urgesResisted;
+function tick(){
+  const diff=Date.now()-S.startTime;
+  if(diff<0)return;
+  const ts=Math.floor(diff/1000);
+  const s=ts%60,m=Math.floor(ts/60)%60,h=Math.floor(ts/3600)%24,d=Math.floor(ts/86400);
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  set('t-days',d+'d');set('t-hms',h+'h '+m+'m '+s+'s');
+  set('s-days',d);set('c-days',d);
+  set('s-urges',S.urges);set('c-urges',S.urges);
+  const saved=Math.floor((diff/86400000)*S.cost);
+  const fmt='₹'+saved.toLocaleString('en-IN');
+  set('s-money',fmt);set('c-money',fmt);
+  set('add-badge',S.addiction);
+  if(d>S.longest){S.longest=d;save();}
+  const prog=Math.min(diff/(90*86400000),1);
+  const rp=document.getElementById('ring-p');if(rp)rp.style.strokeDashoffset=528-(prog*528);
+  const hrs=diff/3600000;
+  const nxt=MILES.find(ml=>ml.h>hrs);
+  set('c-next',nxt?nxt.name:'👑 Legend');
+  updateInsightNums(d,saved);
 }
 
-function startTimer() {
-  clearInterval(timerInterval);
-  timerInterval = setInterval(updateTimer, 1000);
-  updateTimer();
+function switchPage(pg){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
+  document.getElementById('pg-'+pg).classList.add('on');
+  const ni=document.getElementById('ni-'+pg);if(ni)ni.classList.add('on');
+  if(pg==='insights')renderInsights();
+  if(pg==='milestones')renderMilestones();
+  if(pg==='journal')renderJournal();
+  if(pg==='settings')updateSettings();
 }
 
-function updateTimer() {
-  const now = Date.now();
-  const diff = now - state.startTime;
-  const totalSecs = Math.floor(diff / 1000);
-  const secs = totalSecs % 60;
-  const mins = Math.floor(totalSecs / 60) % 60;
-  const hours = Math.floor(totalSecs / 3600) % 24;
-  const days = Math.floor(totalSecs / 86400);
-
-  document.getElementById('timer-main').textContent = `${days}d`;
-  document.getElementById('timer-sub').textContent = `${hours}h ${mins}m ${secs}s`;
-  document.getElementById('streak-days').textContent = days;
-  document.getElementById('streak-urges').textContent = state.urgesResisted;
-  document.getElementById('stat-days').textContent = days;
-  document.getElementById('stat-urges').textContent = state.urgesResisted;
-
-  const saved = Math.floor((diff / 86400000) * state.dailyCost);
-  document.getElementById('money-saved').textContent = `₹${saved.toLocaleString('en-IN')}`;
-  document.getElementById('stat-money').textContent = `₹${saved.toLocaleString('en-IN')}`;
-
-  // Ring progress — fill based on progress toward 90 days
-  const progress = Math.min(diff / (90 * 86400000), 1);
-  const circumference = 553;
-  const offset = circumference - (progress * circumference);
-  document.getElementById('ring-progress').style.strokeDashoffset = offset;
-
-  // Longest streak
-  if (days > state.longestStreak) { state.longestStreak = days; saveState(); }
-
-  // Next badge
-  const hoursElapsed = diff / 3600000;
-  const next = MILESTONES.find(m => m.hours > hoursElapsed);
-  document.getElementById('stat-next-badge').textContent = next ? next.name : '👑 Legend';
-
-  updateInsightNumbers(days, saved);
+function openModal(id){
+  document.getElementById(id).classList.add('on');
+  if(id==='m-distract')fillDistract();
+  if(id==='m-affirm')fillAffirm();
+  if(id==='m-savings')fillSavings();
+  if(id==='m-urge'){curUrge=S.urges;const el=document.getElementById('u-num');if(el)el.textContent=curUrge;}
+  if(id==='m-ep'){const el=document.getElementById('ep-in');if(el)el.value=S.name;}
+  if(id==='m-ea'){const el=document.getElementById('ea-in');if(el)el.value=S.addiction;}
+  if(id==='m-ec'){const el=document.getElementById('ec-in');if(el)el.value=S.cost;}
+  if(id==='m-breathe')resetBreath();
 }
-
-function updateUI() {
-  document.getElementById('addiction-badge').textContent = state.addiction;
-  document.getElementById('streak-urges').textContent = state.urgesResisted;
-  currentUrgeDisplay = state.urgesResisted;
-  document.getElementById('urge-display').textContent = currentUrgeDisplay;
+function closeModal(id){
+  document.getElementById(id).classList.remove('on');
+  if(id==='m-breathe')stopBreath();
 }
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)closeModal(o.id);}));
 
-function renderQuote() {
-  const q = QUOTES[Math.floor(Date.now() / 86400000) % QUOTES.length];
-  document.getElementById('quote-text').textContent = q.text;
-  document.getElementById('quote-author').textContent = `— ${q.author}`;
-}
-
-// ═══════════════════════════════════════
-// NAVIGATION
-// ═══════════════════════════════════════
-function switchPage(page) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById(`page-${page}`).classList.add('active');
-  const navEl = document.getElementById(`nav-${page}`);
-  if (navEl) navEl.classList.add('active');
-  if (page === 'insights') renderInsights();
-  if (page === 'milestones') renderMilestones();
-  if (page === 'journal') renderJournal();
-  if (page === 'settings') updateSettings();
-  window.scrollTo(0, 0);
-}
-
-// ═══════════════════════════════════════
-// MILESTONES
-// ═══════════════════════════════════════
-function renderMilestones() {
-  const diff = Date.now() - state.startTime;
-  const hoursElapsed = diff / 3600000;
-  const container = document.getElementById('milestone-list');
-  container.innerHTML = MILESTONES.map(m => {
-    const unlocked = hoursElapsed >= m.hours;
-    return `<div class="milestone ${unlocked ? 'unlocked' : ''}">
-      <div class="milestone-icon">${m.icon}</div>
-      <div class="milestone-text">
-        <div class="milestone-name">${m.name}</div>
-        <div class="milestone-desc">${m.desc}</div>
-      </div>
-      <div class="milestone-badge ${unlocked ? '' : 'locked'}">${unlocked ? '✅ Done' : '🔒 Locked'}</div>
-    </div>`;
+const MILES=[
+  {ico:'🌱',name:'1 Hour',desc:'The hardest first hour',h:1/24},
+  {ico:'🌤',name:'First Day',desc:'24 hours of strength',h:1},
+  {ico:'🔥',name:'3 Days',desc:'Body already healing',h:3},
+  {ico:'⚡',name:'One Week',desc:'A full week of freedom',h:7},
+  {ico:'💎',name:'2 Weeks',desc:'New neural pathways forming',h:14},
+  {ico:'🏅',name:'One Month',desc:'30 days — incredible!',h:30},
+  {ico:'🥇',name:'90 Days',desc:'New habit fully formed',h:90},
+  {ico:'🚀',name:'6 Months',desc:'Half a year of freedom',h:180},
+  {ico:'👑',name:'One Year',desc:'A year — unstoppable!',h:365},
+];
+function renderMilestones(){
+  const hrs=(Date.now()-S.startTime)/3600000;
+  const el=document.getElementById('mile-list');if(!el)return;
+  el.innerHTML=MILES.map(m=>{
+    const ok=hrs>=m.h;
+    return`<div class="mile${ok?' done':''}"><div class="m-ico">${m.ico}</div><div class="m-txt"><div class="m-name">${m.name}</div><div class="m-desc">${m.desc}</div></div><div class="m-badge ${ok?'done':'lock'}">${ok?'✅ Done':'🔒'}</div></div>`;
   }).join('');
 }
 
-// ═══════════════════════════════════════
-// INSIGHTS
-// ═══════════════════════════════════════
-function renderInsights() {
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const now = new Date();
-  document.getElementById('insights-month').textContent = `${months[now.getMonth()]} ${now.getFullYear()}`;
-  renderBarChart();
+function pickMood(el){document.querySelectorAll('.mb').forEach(b=>b.classList.remove('on'));el.classList.add('on');selMood=el.dataset.m;}
+function saveJournal(){
+  const txt=document.getElementById('j-in').value.trim();
+  if(!txt){toast('⚠️ Write something first');return;}
+  S.journal.unshift({mood:selMood,text:txt,date:new Date().toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'})});
+  save();document.getElementById('j-in').value='';closeModal('m-journal');renderJournal();toast('📓 Entry saved!');
+}
+function renderJournal(){
+  const el=document.getElementById('j-list');if(!el)return;
+  if(!S.journal.length){el.innerHTML='<p style="color:var(--muted);font-size:14px;text-align:center;padding:20px">No entries yet</p>';return;}
+  el.innerHTML=S.journal.slice(0,20).map(e=>`<div class="j-entry"><div class="j-date">${e.date}</div><div class="j-mood">${e.mood}</div><div class="j-body">${e.text}</div></div>`).join('');
 }
 
-function renderBarChart() {
-  const container = document.getElementById('bar-chart');
-  const days = ['S','M','T','W','T','F','S'];
-  const startDay = new Date(state.startTime);
-  const now = new Date();
-
-  let bars = '';
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date(now);
-    d.setDate(now.getDate() - i);
-    const isSober = d >= startDay;
-    const h = isSober ? (20 + Math.random() * 60) : 4;
-    bars += `<div class="bar-col">
-      <div class="bar ${isSober ? 'filled' : ''}" style="height:${h}px"></div>
-      <span class="bar-day">${days[d.getDay()]}</span>
-    </div>`;
+function renderInsights(){
+  const now=new Date();
+  const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const mel=document.getElementById('ins-month');if(mel)mel.textContent=mo[now.getMonth()]+' '+now.getFullYear();
+  const days=['S','M','T','W','T','F','S'],start=new Date(S.startTime);
+  const bc=document.getElementById('bar-chart');if(!bc)return;
+  bc.innerHTML='';
+  for(let i=6;i>=0;i--){
+    const d=new Date(now);d.setDate(now.getDate()-i);
+    const sober=d>=start;const h=sober?(24+Math.random()*44):3;
+    bc.innerHTML+=`<div class="b-col"><div class="bar${sober?' fill':''}" style="height:${h}px"></div><span class="b-day">${days[d.getDay()]}</span></div>`;
   }
-  container.innerHTML = bars;
+}
+function updateInsightNums(d,saved){
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  set('i-days',d);set('i-streak',S.longest+' days');set('i-urges',S.urges);
+  set('i-journal',S.journal.length);set('i-money','₹'+saved.toLocaleString('en-IN'));
+  set('i-hours',(d*24)+' hrs');
 }
 
-function updateInsightNumbers(days, saved) {
-  const el = id => document.getElementById(id);
-  if (el('ins-days')) el('ins-days').textContent = days;
-  if (el('ins-streak')) el('ins-streak').textContent = `${state.longestStreak} days`;
-  if (el('ins-urges')) el('ins-urges').textContent = state.urgesResisted;
-  if (el('ins-journal')) el('ins-journal').textContent = state.journalEntries.length;
-  if (el('ins-money')) el('ins-money').textContent = `₹${saved.toLocaleString('en-IN')}`;
-  if (el('ins-hours')) el('ins-hours').textContent = `${(days * 24).toFixed(0)} hrs`;
+const BPHASES=[{txt:'Inhale',cnt:4,cls:'in'},{txt:'Hold',cnt:4,cls:''},{txt:'Exhale',cnt:4,cls:'out'},{txt:'Hold',cnt:4,cls:''}];
+function resetBreath(){
+  breathOn=false;breathPhase=0;clearInterval(breathID);
+  const bc=document.getElementById('bc'),bt=document.getElementById('b-txt'),bcnt=document.getElementById('b-cnt'),btn=document.getElementById('b-start-btn');
+  if(bc)bc.className='bcircle';if(bt)bt.textContent='Ready?';if(bcnt)bcnt.textContent='4';if(btn){btn.disabled=false;btn.textContent='Start';}
+}
+function startBreath(){
+  breathOn=true;breathPhase=0;
+  const btn=document.getElementById('b-start-btn');if(btn){btn.disabled=true;btn.textContent='Breathing...';}
+  runBreath();
+}
+function runBreath(){
+  if(!breathOn)return;
+  const ph=BPHASES[breathPhase%4];
+  const bc=document.getElementById('bc'),bt=document.getElementById('b-txt'),bcnt=document.getElementById('b-cnt');
+  if(!bc)return;
+  bc.className='bcircle'+(ph.cls?' '+ph.cls:'');
+  bt.textContent=ph.txt;let c=ph.cnt;if(bcnt)bcnt.textContent=c;
+  breathID=setInterval(()=>{
+    c--;if(bcnt)bcnt.textContent=c;
+    if(c<=0){clearInterval(breathID);breathPhase++;
+      if(breathPhase<16)setTimeout(runBreath,300);else stopBreath();}
+  },1000);
+}
+function stopBreath(){
+  breathOn=false;clearInterval(breathID);
+  setTimeout(()=>{
+    const btn=document.getElementById('b-start-btn');if(btn){btn.disabled=false;btn.textContent='Start';}
+    const bc=document.getElementById('bc'),bt=document.getElementById('b-txt'),bcnt=document.getElementById('b-cnt');
+    if(bc)bc.className='bcircle';if(bt)bt.textContent='Done! Great job';if(bcnt)bcnt.textContent='✓';
+  },100);
 }
 
-// ═══════════════════════════════════════
-// JOURNAL
-// ═══════════════════════════════════════
-function selectMood(el) {
-  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('sel'));
-  el.classList.add('sel');
-  selectedMood = el.dataset.mood;
+const DISTRACTS=['🚶 Go for a 10-minute walk','💧 Drink a large glass of cold water','📞 Call a supportive friend','🎵 Play your favourite upbeat song','🧹 Tidy one area of your space','✍️ Write 3 things you\'re grateful for','🍎 Eat a healthy snack','📚 Read 5 pages of a book','🏃 Do 10 jumping jacks','🌿 Step outside and breathe deeply','🎨 Doodle something','🧩 Solve a puzzle or riddle','💪 Do a quick workout set','🎮 Play a casual mobile game for 5 min','🛁 Take a cold shower'];
+function fillDistract(){const sh=[...DISTRACTS].sort(()=>Math.random()-.5).slice(0,5);document.getElementById('d-list').innerHTML=sh.map(d=>`<div class="ditem">${d}</div>`).join('');}
+
+const AFFIRMS=['I am stronger than my cravings.','Every urge I resist makes me more powerful.','I choose health and freedom over temporary pleasure.','My past does not define my future.','I deserve a life of clarity and peace.','This craving is temporary. My strength is permanent.','I am not my addiction. I am so much more.','Each clean day is a gift I give to myself.','I have the power to rewrite my story.','I choose who I want to become.','My brain is healing and rewiring every single day.','I am worthy of love, health, and freedom.'];
+function fillAffirm(){const el=document.getElementById('af-txt');if(el)el.textContent=AFFIRMS[Math.floor(Math.random()*AFFIRMS.length)];}
+
+function chgUrge(d){curUrge=Math.max(0,curUrge+d);const el=document.getElementById('u-num');if(el)el.textContent=curUrge;}
+function saveUrge(){
+  const added=curUrge-S.urges;S.urges=curUrge;save();closeModal('m-urge');
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  set('s-urges',S.urges);set('c-urges',S.urges);
+  if(added>0)toast('💪 '+added+' urge'+(added>1?'s':'')+' resisted!');else toast('✅ Saved!');
 }
 
-function saveJournal() {
-  const text = document.getElementById('journal-input').value.trim();
-  if (!text) { showToast('⚠️ Please write something first'); return; }
-  const entry = {
-    mood: selectedMood,
-    text,
-    date: new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })
-  };
-  state.journalEntries.unshift(entry);
-  saveState();
-  document.getElementById('journal-input').value = '';
-  closeModal('modal-journal');
-  renderJournal();
-  showToast('📓 Journal entry saved!');
+function fillSavings(){
+  const diff=Date.now()-S.startTime,days=diff/86400000;
+  const saved=Math.floor(days*S.cost);
+  const sa=document.getElementById('sav-amt');if(sa)sa.textContent='₹'+saved.toLocaleString('en-IN');
+  const sb=document.getElementById('sav-break');
+  if(sb)sb.innerHTML=`<div class="p-row"><span class="p-lbl">Daily saving</span><span class="p-val green">₹${S.cost}</span></div><div class="p-row"><span class="p-lbl">This week</span><span class="p-val gold">₹${Math.floor(Math.min(days,7)*S.cost).toLocaleString('en-IN')}</span></div><div class="p-row"><span class="p-lbl">This month</span><span class="p-val gold">₹${Math.floor(Math.min(days,30)*S.cost).toLocaleString('en-IN')}</span></div><div class="p-row" style="border:none"><span class="p-lbl">Total saved</span><span class="p-val green">₹${saved.toLocaleString('en-IN')}</span></div>`;
 }
 
-function renderJournal() {
-  const container = document.getElementById('journal-entries');
-  if (!state.journalEntries.length) {
-    container.innerHTML = '<p style="color:var(--muted);font-size:14px;text-align:center;padding:20px">No entries yet — write your first one!</p>';
-    return;
-  }
-  container.innerHTML = state.journalEntries.slice(0, 15).map(e => `
-    <div class="journal-entry">
-      <div class="journal-entry-date">${e.date}</div>
-      <div class="journal-entry-mood">${e.mood}</div>
-      <div class="journal-entry-text">${e.text}</div>
-    </div>
-  `).join('');
-}
+function doRelapse(){S.relapses=(S.relapses||0)+1;S.startTime=Date.now();save();closeModal('m-relapse');tick();renderMilestones();toast('🔄 Timer reset. New start — you got this! 💚');}
 
-// ═══════════════════════════════════════
-// BREATHING
-// ═══════════════════════════════════════
-const BREATHE_PHASES = [
-  { label: 'Inhale', count: 4, class: 'inhale' },
-  { label: 'Hold', count: 4, class: '' },
-  { label: 'Exhale', count: 4, class: 'exhale' },
-  { label: 'Hold', count: 4, class: '' },
+function updateSettings(){
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  set('set-name',S.name||'Your Name');
+  set('set-add','Quitting: '+(S.addiction||'–'));
+  set('set-cost','Daily cost: ₹'+S.cost);
+}
+function saveEP(){const v=document.getElementById('ep-in').value.trim();if(!v)return;S.name=v;save();updateSettings();closeModal('m-ep');toast('✅ Name updated!');}
+function saveEA(){const v=document.getElementById('ea-in').value.trim();if(!v)return;S.addiction=v;save();const b=document.getElementById('add-badge');if(b)b.textContent=v;updateSettings();closeModal('m-ea');toast('✅ Updated!');}
+function saveEC(){const v=parseFloat(document.getElementById('ec-in').value)||0;S.cost=v;save();updateSettings();closeModal('m-ec');toast('✅ Cost updated!');}
+function exportData(){const b=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='unshackled-data.json';a.click();toast('📤 Exported!');}
+function resetAll(){if(confirm('Delete all data and start fresh?')){localStorage.removeItem(KEY);location.reload();}}
+
+const QUOTES=[
+  {t:'The secret of getting ahead is getting started.',a:'Mark Twain'},
+  {t:'Rock bottom became the solid foundation on which I rebuilt my life.',a:'J.K. Rowling'},
+  {t:'Every moment is a fresh beginning.',a:'T.S. Eliot'},
+  {t:'You are stronger than you think.',a:'A.A. Milne'},
+  {t:'One day at a time.',a:'Recovery Wisdom'},
+  {t:'The pain you feel today will be the strength you feel tomorrow.',a:'Unknown'},
+  {t:'Believe you can and you\'re halfway there.',a:'Theodore Roosevelt'},
+  {t:'It does not matter how slowly you go as long as you do not stop.',a:'Confucius'},
+  {t:'Recovery is not a race. You don\'t have to feel guilty if it takes you longer.',a:'Anonymous'},
+  {t:'Your present circumstances don\'t determine where you can go; they merely determine where you start.',a:'Nido Qubein'},
 ];
+function renderQuote(){const q=QUOTES[Math.floor(Date.now()/86400000)%QUOTES.length];const qt=document.getElementById('q-text'),qa=document.getElementById('q-auth');if(qt)qt.textContent=q.t;if(qa)qa.textContent='— '+q.a;}
 
-function startBreathing() {
-  breatheRunning = true;
-  breathePhase = 0;
-  document.getElementById('breathe-btn').disabled = true;
-  document.getElementById('breathe-btn').textContent = 'Breathing...';
-  runBreathePhase();
-}
+let tID;
+function toast(msg){const t=document.getElementById('tst');if(!t)return;t.textContent=msg;t.classList.add('on');clearTimeout(tID);tID=setTimeout(()=>t.classList.remove('on'),3000);}
 
-function runBreathePhase() {
-  if (!breatheRunning) return;
-  const phase = BREATHE_PHASES[breathePhase % 4];
-  const circle = document.getElementById('breathe-circle');
-  const text = document.getElementById('breathe-text');
-  const countEl = document.getElementById('breathe-count');
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();dInstall=e;const b=document.getElementById('inst-banner');if(b)b.style.display='flex';});
+function doInstall(){if(dInstall){dInstall.prompt();dInstall.userChoice.then(r=>{if(r.outcome==='accepted'){const b=document.getElementById('inst-banner');if(b)b.style.display='none';toast('🎉 App installed!');}dInstall=null;});}}
+window.addEventListener('appinstalled',()=>{const b=document.getElementById('inst-banner');if(b)b.style.display='none';toast('🎉 Unshackled installed!');});
 
-  circle.className = 'breathe-circle ' + phase.class;
-  text.textContent = phase.label;
-  countEl.textContent = phase.count;
-
-  let c = phase.count;
-  breatheInterval = setInterval(() => {
-    c--;
-    countEl.textContent = c;
-    if (c <= 0) {
-      clearInterval(breatheInterval);
-      breathePhase++;
-      if (breathePhase < 16) setTimeout(runBreathePhase, 300);
-      else stopBreathing();
-    }
-  }, 1000);
-}
-
-function stopBreathing() {
-  breatheRunning = false;
-  clearInterval(breatheInterval);
-  const btn = document.getElementById('breathe-btn');
-  if (btn) { btn.disabled = false; btn.textContent = 'Start Exercise'; }
-  const circle = document.getElementById('breathe-circle');
-  const text = document.getElementById('breathe-text');
-  const countEl = document.getElementById('breathe-count');
-  if (circle) { circle.className = 'breathe-circle'; }
-  if (text) text.textContent = 'Get Ready...';
-  if (countEl) countEl.textContent = '4';
-}
-
-// ═══════════════════════════════════════
-// DISTRACTIONS & AFFIRMATIONS
-// ═══════════════════════════════════════
-function shuffleDistractions() {
-  const shuffled = [...DISTRACTIONS].sort(() => Math.random() - 0.5).slice(0, 4);
-  document.getElementById('distract-list').innerHTML = shuffled.map(d =>
-    `<div style="background:var(--surface);border-radius:12px;padding:14px;font-size:14px">${d}</div>`
-  ).join('');
-}
-
-function shuffleAffirmation() {
-  const a = AFFIRMATIONS[Math.floor(Math.random() * AFFIRMATIONS.length)];
-  document.getElementById('affirmation-text').textContent = a;
-}
-
-// ═══════════════════════════════════════
-// URGE TRACKER
-// ═══════════════════════════════════════
-function changeUrge(delta) {
-  currentUrgeDisplay = Math.max(0, currentUrgeDisplay + delta);
-  document.getElementById('urge-display').textContent = currentUrgeDisplay;
-}
-
-function saveUrges() {
-  const added = currentUrgeDisplay - state.urgesResisted;
-  state.urgesResisted = currentUrgeDisplay;
-  saveState();
-  closeModal('modal-urge');
-  document.getElementById('streak-urges').textContent = state.urgesResisted;
-  document.getElementById('stat-urges').textContent = state.urgesResisted;
-  if (added > 0) showToast(`💪 ${added} urge${added > 1 ? 's' : ''} resisted! You're incredible.`);
-  else showToast('✅ Saved!');
-}
-
-// ═══════════════════════════════════════
-// SAVINGS
-// ═══════════════════════════════════════
-function openSavingsModal() {
-  const diff = Date.now() - state.startTime;
-  const days = diff / 86400000;
-  const saved = Math.floor(days * state.dailyCost);
-  document.getElementById('modal-savings-amount').textContent = `₹${saved.toLocaleString('en-IN')}`;
-  document.getElementById('savings-breakdown').innerHTML = `
-    <div class="progress-stat"><span class="ps-label">Daily saving</span><span class="ps-val good">₹${state.dailyCost}</span></div>
-    <div class="progress-stat"><span class="ps-label">This week</span><span class="ps-val gold">₹${(Math.min(days, 7) * state.dailyCost).toFixed(0)}</span></div>
-    <div class="progress-stat"><span class="ps-label">This month</span><span class="ps-val gold">₹${(Math.min(days, 30) * state.dailyCost).toFixed(0)}</span></div>
-    <div class="progress-stat"><span class="ps-label">Total saved</span><span class="ps-val good">₹${saved.toLocaleString('en-IN')}</span></div>
-  `;
-}
-
-// ═══════════════════════════════════════
-// RELAPSE
-// ═══════════════════════════════════════
-function confirmRelapse() {
-  state.relapseCount = (state.relapseCount || 0) + 1;
-  state.startTime = Date.now();
-  saveState();
-  closeModal('modal-relapse');
-  updateTimer();
-  showToast('🔄 Timer reset. Every new start is a win. You got this! 💚');
-  renderMilestones();
-}
-
-// ═══════════════════════════════════════
-// SETTINGS
-// ═══════════════════════════════════════
-function updateSettings() {
-  document.getElementById('settings-name-label').textContent = state.name || 'Your Name';
-  document.getElementById('settings-addiction-label').textContent = `Quitting: ${state.addiction}`;
-  document.getElementById('settings-cost-label').textContent = `Daily cost: ₹${state.dailyCost}`;
-}
-
-function saveEditProfile() {
-  const val = document.getElementById('edit-name-input').value.trim();
-  if (!val) return;
-  state.name = val;
-  saveState();
-  updateSettings();
-  closeModal('modal-edit-profile');
-  showToast('✅ Name updated!');
-}
-
-function saveEditAddiction() {
-  const val = document.getElementById('edit-addiction-input').value.trim();
-  if (!val) return;
-  state.addiction = val;
-  saveState();
-  document.getElementById('addiction-badge').textContent = state.addiction;
-  updateSettings();
-  closeModal('modal-edit-addiction');
-  showToast('✅ Addiction updated!');
-}
-
-function saveEditCost() {
-  const val = parseFloat(document.getElementById('edit-cost-input').value) || 0;
-  state.dailyCost = val;
-  saveState();
-  updateSettings();
-  closeModal('modal-edit-cost');
-  showToast('✅ Daily cost updated!');
-}
-
-function toggleNotif() {
-  const t = document.getElementById('toggle-notif');
-  t.classList.toggle('on');
-  if (t.classList.contains('on')) {
-    Notification.requestPermission().then(p => {
-      if (p === 'granted') showToast('🔔 Notifications enabled!');
-    });
-  }
-}
-
-function exportData() {
-  const data = JSON.stringify(state, null, 2);
-  const blob = new Blob([data], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'unshackled-data.json';
-  a.click(); URL.revokeObjectURL(url);
-  showToast('📤 Data exported!');
-}
-
-function confirmReset() {
-  if (confirm('⚠️ This will permanently delete all your data. Are you sure?')) {
-    localStorage.removeItem('unshackled_state');
-    location.reload();
-  }
-}
-
-// ═══════════════════════════════════════
-// MODAL SYSTEM
-// ═══════════════════════════════════════
-function showModal(id) {
-  document.getElementById(id).classList.add('open');
-  if (id === 'modal-distract') shuffleDistractions();
-  if (id === 'modal-affirmation') shuffleAffirmation();
-  if (id === 'modal-savings') openSavingsModal();
-  if (id === 'modal-urge') {
-    currentUrgeDisplay = state.urgesResisted;
-    document.getElementById('urge-display').textContent = currentUrgeDisplay;
-  }
-  if (id === 'modal-edit-profile') document.getElementById('edit-name-input').value = state.name;
-  if (id === 'modal-edit-addiction') document.getElementById('edit-addiction-input').value = state.addiction;
-  if (id === 'modal-edit-cost') document.getElementById('edit-cost-input').value = state.dailyCost;
-}
-
-function closeModal(id) {
-  document.getElementById(id).classList.remove('open');
-  if (id === 'modal-breathe') stopBreathing();
-}
-
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
-  overlay.addEventListener('click', e => {
-    if (e.target === overlay) closeModal(overlay.id);
-  });
-});
-
-// ═══════════════════════════════════════
-// TOAST
-// ═══════════════════════════════════════
-let toastTimeout;
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimeout);
-  toastTimeout = setTimeout(() => t.classList.remove('show'), 3000);
-}
-
-// ═══════════════════════════════════════
-// PWA
-// ═══════════════════════════════════════
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredInstallPrompt = e;
-  document.getElementById('install-banner').style.display = 'flex';
-});
-
-function installPWA() {
-  if (deferredInstallPrompt) {
-    deferredInstallPrompt.prompt();
-    deferredInstallPrompt.userChoice.then(r => {
-      if (r.outcome === 'accepted') {
-        document.getElementById('install-banner').style.display = 'none';
-        showToast('🎉 App installed successfully!');
-      }
-      deferredInstallPrompt = null;
-    });
-  }
-}
-
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('./sw.js',{scope:'./'})
+      .then(r=>console.log('SW registered:',r.scope))
+      .catch(e=>console.warn('SW error:',e));
   });
 }
 
-// ═══════════════════════════════════════
-// START
-// ═══════════════════════════════════════
-init();
+boot();
 </script>
 </body>
 </html>
